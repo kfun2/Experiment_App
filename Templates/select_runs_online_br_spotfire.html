@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<script>
+    document.getElementById('pills-nav').style.display = 'none';
+  </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.css">
+
+<div style="margin-left:0.5%">
+<br>
+<h4>Select Runs</h4>
+<hr>
+<div id="loading" style="display:none">
+  <p></p>
+  <p style="text-align:center">
+  <h6>&nbsp;Creating View...</h6>
+  <img width="150px" src="../static/loading.gif">
+</p>
+</div>
+
+
+<div id="content">
+
+<p></p>
+  <form id="my-form" action="{{ url_for('select_runs_online_br_spotfire_submit') }}" method="post" class="form" role="form">
+   
+    <select name="select_runs" id="select_runs">
+    </select>
+   
+    <p>  
+
+    <button type="button" onclick="create_drop_down('Select Runs')">Select Runs!</button>
+    </p> 
+
+  <table id="my_table1" style="width:50%">
+    <thead>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<p style="display:none" id="show"></p>
+
+  <p></p>
+  <p></p>
+
+  </form>
+
+</div>
+
+</div>
+
+<script src="https://unpkg.com/read-excel-file@5.x/bundle/read-excel-file.min.js"></script>
+
+<script>
+    function create_drop_down() {
+        // creates table of file upload buttons when number of runs field is filled in
+        $("#my_table1 tr").remove(); 
+        var tabl = document.getElementById('my_table1');
+        //let num_runs = Number(document.getElementById('num_runs').value)
+        //for (let i = 0; i < num_runs; i++) {
+           row = tabl.insertRow(0);
+            var cell = row.insertCell(0);
+            cell.innerHTML = `<div class="form-group "><label class="control-label" for="run_id">Run Name</label><br>
+              
+              
+              <select style="width:500px" required onchange="check_if_already_run_name(this.name)" class="chzn-select" multiple multiselect-search ="true" id="run_id" name="run_id_1">
+                    
+                    <option disabled selected value> -- select an option -- </option>
+                    {% for i in range(run_names_lst | length) %}
+                    <option value="{{run_names_lst[i]}}">{{run_names_lst[i]}}</option>
+                    {% endfor %}
+  
+                  </select>
+  
+              </div>
+              <label>Upload Bioreactor Data File (.xls or .xlsx):</label><br>
+            <label>Choose Reactor or Data Source System </label><br>
+            <input onclick="loading()" id="sub" type="submit" value="Parse Data & Push to Database" class="btn btn-primary" style="background-color:#006fba;border-color:#006fba" required> `;
+        make_chosen();
+        document.getElementById('show').style.display = 'block';
+    }
+  </script>
+
+
+
+<script>
+  // loading page
+  function loading(){
+      document.getElementById('content').style.display = 'none'
+      document.getElementById('loading').style.display = 'block'    
+  }
+</script>
+
+
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.min.css">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.jquery.min.js"></script>
+
+<script>
+    // allows us to filter out results in run id select fields
+    function make_chosen() {
+        $(".chzn-select").chosen();
+    }
+</script>
+
+
+{% endblock %}
+
+
+

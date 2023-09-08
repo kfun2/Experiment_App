@@ -1,0 +1,835 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+<script>
+  document.getElementById('pills-nav').style.display = 'none';
+</script>
+
+<div style="margin-left:0.5%">
+  <br>
+    <h4>Edit Batch Process Version</h4>
+    <hr>
+    <form action="{{ url_for('batch_process_edit_submitted') }}" method="post" class="form" role="form">
+      <input id="csrf_token" name="csrf_token" type="hidden" value="ImVmYjBhYmU1MGExYjJmZDE4MjVmMTc4MDYyM2FkM2QyNDE3ZTMzZTIi.Ytr4zA.fWw7hhoXGCaoj3yr9vsiqDj10f0">
+
+      <div class="form-group "><label class="control-label" for="process_version_name_used_as_template">Process Version to Edit</label>
+      
+        <select onchange="autofill()" class="form-control" id="process_version_name_used_as_template" name="process_version_name_used_as_template">
+          
+          <option disabled selected value> -- select an option -- </option>
+          
+          {% for i in range(versions | length) %}
+          <option value="{{versions[i]}}">{{versions[i]}}</option>
+          {% endfor %}
+
+        </select>
+      
+  </div>
+  
+  <hr>
+
+
+<div class="form-group "><label class="control-label" for="process_description">Process Description</label>
+        
+          <input class="form-control" id="process_description" name="process_description" type="text" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+
+
+<div class="form-group "><label class="control-label" for="strain">Strain</label>
+        
+          <input class="form-control" id="strain" name="strain" type="text" value="">
+        
+  </div>
+
+
+
+
+
+
+<div class="form-group "><label class="control-label" for="scale_liter">Scale Litter</label>
+        
+          <input class="form-control" id="scale_liter" name="scale_liter" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="number_of_seed_stages">Number of Seed Stages</label>
+        
+          <input class="form-control" id="number_of_seed_stages" name="number_of_seed_stages" step="any" type="number" value="">
+        
+  </div>
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="feed_medium_concentration">Feed Medium Concentration</label>
+        
+          <input class="form-control" id="feed_medium_concentration" name="feed_medium_concentration" type="text" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="batch_temperature_setpoint_celcius">Batch Temperature Setpoint (Celcius)</label>
+        
+          <input class="form-control" id="batch_temperature_setpoint_celcius" name="batch_temperature_setpoint_celcius" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="fed_batch_temperature_setpoint_celcius">Fed Batch Temperature Setpoint (Celcius)</label>
+        
+          <input class="form-control" id="fed_batch_temperature_setpoint_celcius" name="fed_batch_temperature_setpoint_celcius" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="induction_temperature_setpoint_celcius">Induction Temperature Setpoint (Celcius)</label>
+        
+          <input class="form-control" id="induction_temperature_setpoint_celcius" name="induction_temperature_setpoint_celcius" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+  <div class="form-group "><label class="control-label" for="batch_phase_ph_setpoint">Batch Phase pH Setpoint</label>
+        
+    <input class="form-control" id="batch_phase_ph_setpoint" name="batch_phase_ph_setpoint" step="any" type="number" value="">
+  
+</div>
+
+
+
+
+
+<div class="form-group "><label class="control-label" for="fed_batch_ph_setpoint">Fed Batch pH Setpoint</label>
+  
+    <input class="form-control" id="fed_batch_ph_setpoint" name="fed_batch_ph_setpoint" step="any" type="number" value="">
+  
+</div>
+
+
+
+
+
+<div class="form-group "><label class="control-label" for="induction_ph_setpoint">Induction pH Setpoint</label>
+  
+    <input class="form-control" id="induction_ph_setpoint" name="induction_ph_setpoint" step="any" type="number" value="">
+  
+</div>
+
+    
+
+
+
+<div class="form-group "><label class="control-label" for="batch_phase_do_setpoint">Batch Phase Do Setpoint</label>
+    
+  <input class="form-control" id="batch_phase_do_setpoint" name="batch_phase_do_setpoint" step="any" type="number" value="">
+
+</div>
+
+
+<div class="form-group "><label class="control-label" for="fed_batch_do_setpoint">Fed Batch Do Setpoint</label>
+
+<input class="form-control" id="fed_batch_do_setpoint" name="fed_batch_do_setpoint" step="any" type="number" value="">
+
+</div>
+
+
+<div class="form-group "><label class="control-label" for="induction_do_setpoint">Induction Do Setpoint</label>
+
+<input class="form-control" id="induction_do_setpoint" name="induction_do_setpoint" step="any" type="number" value="">
+
+</div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="target_batch_phase_airflow_vvm">Target Batch Phase Airflow (VVM)</label>
+        
+          <input class="form-control" id="target_batch_phase_airflow_vvm" name="target_batch_phase_airflow_vvm" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="target_fed_batch_phase_airflow_vvm">Target Fed Batch Phase Airflow (VVM)</label>
+        
+          <input class="form-control" id="target_fed_batch_phase_airflow_vvm" name="target_fed_batch_phase_airflow_vvm" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="foam_control">Foam Control</label>
+        
+          <input class="form-control" id="foam_control" name="foam_control" type="text" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="inducer">Inducer</label>
+        
+          <input class="form-control" id="inducer" name="inducer" type="text" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="target_batch_volume_ml">Target Batch Volume (mL)</label>
+        
+          <input class="form-control" id="target_batch_volume_ml" name="target_batch_volume_ml" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="target_pre_induction_volume_ml">Target Pre-Induction Volume (mL)</label>
+        
+          <input class="form-control" id="target_pre_induction_volume_ml" name="target_pre_induction_volume_ml" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="target_final_volume_ml">Target Final Volume (mL)</label>
+        
+          <input class="form-control" id="target_final_volume_ml" name="target_final_volume_ml" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="target_final_volume_w_drawdown_ml">Target Final Volume w/ Drawdown (mL)</label>
+        
+          <input class="form-control" id="target_final_volume_w_drawdown_ml" name="target_final_volume_w_drawdown_ml" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="seed_media">Seed Media</label>
+        
+          <input class="form-control" id="seed_media" name="seed_media" type="text" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="feed_media_1">Feed Media 1</label>
+        
+          <input class="form-control" id="feed_media_1" name="feed_media_1" type="text" value="">
+        
+  </div>
+
+
+  <div class="form-group "><label class="control-label" for="feed_media_1_density">Feed Media 1 Density</label>
+        
+    <input class="form-control" id="feed_media_1_density" name="feed_media_1_density" type="number" step="any" value="">
+  
+</div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="target_time_to_add_feed_media_1_post_feed_start_h">Target Time to Add Feed Media 1 Post Feed Start H</label>
+        
+          <input class="form-control" id="target_time_to_add_feed_media_1_post_feed_start_h" name="target_time_to_add_feed_media_1_post_feed_start_h" type="text" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="feed_media_2">Feed Media 2</label>
+        
+          <input class="form-control" id="feed_media_2" name="feed_media_2" type="text" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="target_time_to_add_feed_media_2_post_feed_start_h">Target Time to Add Feed Media 2 Post Feed Start H</label>
+        
+          <input class="form-control" id="target_time_to_add_feed_media_2_post_feed_start_h" name="target_time_to_add_feed_media_2_post_feed_start_h" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="estimated_batch_timing_h">Estimated Batch Timing H</label>
+        
+          <input class="form-control" id="estimated_batch_timing_h" name="estimated_batch_timing_h" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="target_post_feed_duration_until_temp_shift_h">Target Post Feed Duration Until Temp Shift H</label>
+        
+          <input class="form-control" id="target_post_feed_duration_until_temp_shift_h" name="target_post_feed_duration_until_temp_shift_h" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="target_post_feed_duration_until_induction_h">Target Post Feed Duration Until Induction H</label>
+        
+          <input class="form-control" id="target_post_feed_duration_until_induction_h" name="target_post_feed_duration_until_induction_h" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="target_induction_duration_h">Target Induction Duration H</label>
+        
+          <input class="form-control" id="target_induction_duration_h" name="target_induction_duration_h" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="growth_feed_rate_1_m_h_1">Growth Feed Rate 1 h-1</label>
+        
+          <input class="form-control" id="growth_feed_rate_1_m_h_1" name="growth_feed_rate_1_m_h_1" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="growth_feed_rate_1_post_feed_target_time_h">Growth Feed Rate 1 Post Feed Target Time H</label>
+        
+          <input class="form-control" id="growth_feed_rate_1_post_feed_target_time_h" name="growth_feed_rate_1_post_feed_target_time_h" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="growth_feed_rate_1_type">Growth Feed Rate 1 Type</label>
+        
+          <input class="form-control" id="growth_feed_rate_1_type" name="growth_feed_rate_1_type" type="text" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="growth_feed_rate_2_m_h_1">Growth Feed Rate 2 h-1</label>
+        
+          <input class="form-control" id="growth_feed_rate_2_m_h_1" name="growth_feed_rate_2_m_h_1" type="text" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="growth_feed_rate_2_post_feed_target_time_h">Growth Feed Rate 2 Post Feed Target Time H</label>
+        
+          <input class="form-control" id="growth_feed_rate_2_post_feed_target_time_h" name="growth_feed_rate_2_post_feed_target_time_h" type="text" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="growth_feed_rate_2_type">Growth Feed Rate 2 Type</label>
+        
+          <input class="form-control" id="growth_feed_rate_2_type" name="growth_feed_rate_2_type" type="text" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="induction_feed_rate_m_h_1">Induction Feed Rate M H 1</label>
+        
+          <input class="form-control" id="induction_feed_rate_m_h_1" name="induction_feed_rate_m_h_1" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="induction_feed_profile_type">Induction Feed Profile Type</label>
+        
+          <input class="form-control" id="induction_feed_profile_type" name="induction_feed_profile_type" type="text" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="post_feed_time_of_percent_drawdown_h">Post Feed Time of Percent Drawdown H</label>
+        
+          <input class="form-control" id="post_feed_time_of_percent_drawdown_h" name="post_feed_time_of_percent_drawdown_h" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="drawdown_at_post_feed_time_percent">Drawdown at Post Feed Time (Percent)</label>
+        
+          <input class="form-control" id="drawdown_at_post_feed_time_percent" name="drawdown_at_post_feed_time_percent" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="initial_batch_vol_litter">Initial Batch Vol (L)</label>
+        
+          <input class="form-control" id="initial_batch_vol_litter" name="initial_batch_vol_litter" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="x0_grams_over_litter">X0 Grams Over Litter</label>
+        
+          <input class="form-control" id="x0_grams_over_litter" name="x0_grams_over_litter" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="sf_feed_gluc_grams_over_litter">Sf (primary carbon source feed conc) (g/L)</label>
+        
+          <input class="form-control" id="sf_feed_gluc_grams_over_litter" name="sf_feed_gluc_grams_over_litter" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="s0_batch_gluc_grams_over_litter">S0 (primary carbon source batch conc) (g/L)</label>
+        
+          <input class="form-control" id="s0_batch_gluc_grams_over_litter" name="s0_batch_gluc_grams_over_litter" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="yx_over_s_grams_over_grams">Yx/s (g/g)</label>
+        
+          <input class="form-control" id="yx_over_s_grams_over_grams" name="yx_over_s_grams_over_grams" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="od_over_gram_dry_wt_over_litter">OD/g dry wt/L</label>
+        
+          <input class="form-control" id="od_over_gram_dry_wt_over_litter" name="od_over_gram_dry_wt_over_litter" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="growth_phase_feed_interval_h">Growth Phase Feed Interval H</label>
+        
+          <input class="form-control" id="growth_phase_feed_interval_h" name="growth_phase_feed_interval_h" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="feed_profile_type">Feed Profile Type</label>
+        
+          <input class="form-control" id="feed_profile_type" name="feed_profile_type" type="text" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="induction_phase_feed_interval_h">Induction Phase Feed Interval H</label>
+        
+          <input class="form-control" id="induction_phase_feed_interval_h" name="induction_phase_feed_interval_h" step="any" type="number" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="actual_inoculation_time">Actual Inoculation Time</label>
+        
+          <input class="form-control" id="actual_inoculation_time" name="actual_inoculation_time" type="datetime-local" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="actual_fed_batch_start_time">Actual Fed Batch Start Time</label>
+        
+          <input class="form-control" id="actual_fed_batch_start_time" name="actual_fed_batch_start_time" type="datetime-local" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="actual_induction_start_time">Actual Induction Start Time</label>
+        
+          <input class="form-control" id="actual_induction_start_time" name="actual_induction_start_time" type="datetime-local" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="target_induction_duration_1_h">Target Induction Duration 1 H</label>
+        
+          <input class="form-control" id="target_induction_duration_1_h" name="target_induction_duration_1_h" step="any" type="number" value="">
+        
+  </div>
+
+
+  <div class="form-group "><label class="control-label" for="addition_on_scale_pump_1">Addition on Scale/Pump 1</label>
+    
+    <input class="form-control" id="addition_on_scale_pump_1" name="addition_on_scale_pump_1" step="any" type="number" value="">
+  
+  </div>
+  
+  <div class="form-group "><label class="control-label" for="addition_on_scale_pump_2">Addition on Scale/Pump 2</label>
+      
+    <input class="form-control" id="addition_on_scale_pump_2" name="addition_on_scale_pump_2" step="any" type="number" value="">
+  
+  </div>
+
+
+  <input type="submit" value="Save Changes" class="btn btn-primary" style="background-color:#006fba;border-color:#006fba">
+    
+
+</form>
+
+<br>
+
+<script>
+  // auto-fill based on process version
+  function autofill() {
+    d = JSON.parse('{{rows | tojson}}');
+    const selectElement = document.getElementById('process_version_name_used_as_template');
+    const cells = document.querySelectorAll('input');
+      var opt = selectElement.options[selectElement.selectedIndex];
+      for (let i = 0; i < d.length; i++) {
+        var r = d[i]
+          if (r.process_version_name_used_as_template == opt.text) {
+            cells.forEach(function(el) {
+            if (el.value != "Submit") {
+              if (el.id == 'run_name') {
+                el.value = r.run_name;
+              } else if (el.id == 'reactor_id') {
+                el.value = r.reactor_id;
+              } else if (el.id == 'process_description') {
+                el.value = r.process_description;
+              } else if (el.id == 'strain') {
+                el.value = r.strain;
+              } else if (el.id == 'site_of_run') {
+                el.value = r.site_of_run;
+              } else if (el.id == 'scale_liter') {
+                el.value = r.scale_liter;
+              } else if (el.id == 'number_of_seed_stages') {
+                el.value = r.number_of_seed_stages;
+              } else if (el.id == 'seed_train_run_id') {
+                el.value = r.seed_train_run_id;
+              } else if (el.id == 'feed_medium_concentration') {
+                el.value = r.feed_medium_concentration;
+              } else if (el.id == 'batch_temperature_setpoint_celcius') {
+                el.value = r.batch_temperature_setpoint_celcius;
+              } else if (el.id == 'fed_batch_temperature_setpoint_celcius') {
+                el.value = r.fed_batch_temperature_setpoint_celcius;
+              } else if (el.id == 'induction_temperature_setpoint_celcius') {
+                el.value = r.induction_temperature_setpoint_celcius;
+              } else if (el.id == 'batch_phase_ph_setpoint') {
+                el.value = r.batch_phase_ph_setpoint;
+              } else if (el.id == 'fed_batch_ph_setpoint') {
+                el.value = r.fed_batch_ph_setpoint;
+              } else if (el.id == 'induction_ph_setpoint') {
+                el.value = r.induction_ph_setpoint;
+              } else if (el.id == 'batch_phase_do_setpoint') {
+                  el.value = r.batch_phase_do_setpoint;
+              } else if (el.id == 'fed_batch_do_setpoint') {
+                el.value = r.fed_batch_do_setpoint;
+              } else if (el.id == 'induction_do_setpoint') {
+                el.value = r.induction_do_setpoint;
+              } else if (el.id == 'target_batch_phase_airflow_vvm') {
+                el.value = r.target_batch_phase_airflow_vvm;
+              } else if (el.id == 'target_fed_batch_phase_airflow_vvm') {
+                el.value = r.target_fed_batch_phase_airflow_vvm;
+              } else if (el.id == 'foam_control') {
+                el.value = r.foam_control;
+              } else if (el.id == 'inducer') {
+                el.value = r.inducer;
+              } else if (el.id == 'target_batch_volume_ml') {
+                el.value = r.target_batch_volume_ml;
+              } else if (el.id == 'target_pre_induction_volume_ml') {
+                el.value = r.target_pre_induction_volume_ml;
+              } else if (el.id == 'target_final_volume_ml') {
+                el.value = r.target_final_volume_ml;
+              } else if (el.id == 'target_final_volume_w_drawdown_ml') {
+                el.value = r.target_final_volume_w_drawdown_ml;
+              } else if (el.id == 'seed_media') {
+                el.value = r.seed_media;
+              } else if (el.id == 'feed_media_1') {
+                el.value = r.feed_media_1;
+              } else if (el.id == 'feed_media_1_density') {
+                el.value = r.feed_media_1_density;
+              } else if (el.id == 'target_time_to_add_feed_media_1_post_feed_start_h') {
+                el.value = r.target_time_to_add_feed_media_1_post_feed_start_h;
+              } else if (el.id == 'feed_media_2') {
+                el.value = r.feed_media_2;
+              } else if (el.id == 'target_time_to_add_feed_media_2_post_feed_start_h') {
+                el.value = r.target_time_to_add_feed_media_2_post_feed_start_h;
+              } else if (el.id == 'estimated_batch_timing_h') {
+                el.value = r.estimated_batch_timing_h;
+              } else if (el.id == 'target_post_feed_duration_until_temp_shift_h') {
+                el.value = r.target_post_feed_duration_until_temp_shift_h;
+              } else if (el.id == 'target_post_feed_duration_until_induction_h') {
+                el.value = r.target_post_feed_duration_until_induction_h;
+              } else if (el.id == 'target_induction_duration_h') {
+                el.value = r.target_induction_duration_h;
+              } else if (el.id == 'growth_feed_rate_1_m_h_1') {
+                el.value = r.growth_feed_rate_1_m_h_1;
+              } else if (el.id == 'growth_feed_rate_1_post_feed_target_time_h') {
+                el.value = r.growth_feed_rate_1_post_feed_target_time_h;
+              } else if (el.id == 'growth_feed_rate_1_type') {
+                el.value = r.growth_feed_rate_1_type;
+              } else if (el.id == 'growth_feed_rate_2_m_h_1') {
+                el.value = r.growth_feed_rate_2_m_h_1;
+              } else if (el.id == 'growth_feed_rate_2_post_feed_target_time_h') {
+                el.value = r.growth_feed_rate_2_post_feed_target_time_h;
+              } else if (el.id == 'growth_feed_rate_2_type') {
+                el.value = r.growth_feed_rate_2_type;
+              } else if (el.id == 'induction_feed_rate_m_h_1') {
+                el.value = r.induction_feed_rate_m_h_1;
+              } else if (el.id == 'induction_feed_profile_type') {
+                el.value = r.induction_feed_profile_type;
+              } else if (el.id == 'induction_phase_feed_interval_h') {
+                el.value = r.induction_phase_feed_interval_h;
+              } else if (el.id == 'post_feed_time_of_percent_drawdown_h') {
+                el.value = r.post_feed_time_of_percent_drawdown_h;
+              } else if (el.id == 'drawdown_at_post_feed_time_percent') {
+                el.value = r.drawdown_at_post_feed_time_percent;
+              } else if (el.id == 'initial_batch_vol_litter') {
+                el.value = r.initial_batch_vol_litter;
+              } else if (el.id == 'x0_grams_over_litter') {
+                el.value = r.x0_grams_over_litter;
+              } else if (el.id == 'sf_feed_gluc_grams_over_litter') {
+                el.value = r.sf_feed_gluc_grams_over_litter;
+              } else if (el.id == 's0_batch_gluc_grams_over_litter') {
+                el.value = r.s0_batch_gluc_grams_over_litter;
+              } else if (el.id == 'yx_over_s_grams_over_grams') {
+                el.value = r.yx_over_s_grams_over_grams;
+              } else if (el.id == 'od_over_gram_dry_wt_over_litter') {
+                el.value = r.od_over_gram_dry_wt_over_litter;
+              } else if (el.id == 'growth_phase_feed_interval_h') {
+                el.value = r.growth_phase_feed_interval_h;
+              } else if (el.id == 'feed_profile_type') {
+                el.value = r.feed_profile_type;
+              } else if (el.id == 'actual_inoculation_time') {
+                var d = new Date(r.actual_inoculation_time);
+                el.value = d.toISOString().slice(0,16);
+              } else if (el.id == 'actual_fed_batch_start_time') {
+                var d = new Date(r.actual_fed_batch_start_time);
+                el.value = d.toISOString().slice(0,16);
+              } else if (el.id == 'actual_induction_start_time') {
+                var d = new Date(r.actual_induction_start_time);
+                el.value = d.toISOString().slice(0,16);
+              } else if (el.id == 'target_induction_duration_1_h') {
+                el.value = r.target_induction_duration_1_h;
+              } else if (el.id == 'run_outcome') {
+                el.value = r.run_outcome;
+              } else if (el.id == 'addition_on_scale_pump_1') {
+                el.value = r.addition_on_scale_pump_1;
+              } else if (el.id == 'addition_on_scale_pump_2') {
+                el.value = r.addition_on_scale_pump_2;
+              }
+            }
+        });
+      }
+    }
+}
+
+</script>
+
+</div>
+
+{% endblock %}

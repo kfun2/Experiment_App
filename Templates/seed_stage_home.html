@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<script>
+    document.getElementById('pills-nav').style.display = 'none';
+</script>
+
+<div style="margin-left:0.5%">
+<br>
+<h4>Record Seed Stage Data</h4>
+<hr>
+<form action="{{ url_for('seed_stage_more_info') }}" method="post"
+class="form" role="form">
+<input id="csrf_token" name="csrf_token" type="hidden" value="Ijk2Y2Q2NTg1ZWEzMTU2NDVhMjJmMmQyM2M4MjVhYzQxMDE1Mjg2ZDAi.Ys9YlQ.tLi8tj8vkaAR2mKH4XswS4OTsVQ">
+<h6 style="font-size:18px">Select Number of Unique Seed Trains</h6>
+<p>
+    <label for="num_runs">Number of Seed Trains</label>
+    <input id="num_trains" name="num_trains" required step="1" type="number" value="">
+</p>
+
+
+<input type="submit" value="Create New Experiment" class="btn btn-primary" style="background-color:#006fba;border-color:#006fba">
+
+<br>
+
+</div>
+
+
+
+</form>
+
+
+</div>
+
+<br>
+
+</div>
+
+{% endblock %}

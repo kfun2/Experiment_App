@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+
+<script>
+    document.getElementById('pills-nav').style.display = 'none';
+  </script>
+
+<div style="margin-left:0.5%">
+<br>
+<h4>Upload Ferm Batch Record Excel Sheet</h4>
+<hr>
+
+
+
+<form enctype="multipart/form-data" id="my-form" action="{{ url_for('upload_ferm_batch_record_final') }}" method="post" class="form" role="form">
+
+  <input id="csrf_token" name="csrf_token" type="hidden" value="ImMwYmM5OTczMzBlN2M0ZmRmOWM4OWY0YmM5ZWM2ZWY5NWE4Y2Q1ODIi.Yv1otg.OQ41X0WffVKMatH4YwdczgKKdms">
+  
+  <div class="form-group "><label class="control-label" for="experiment_name">Experiment Name</label>
+        
+    <input class="form-control" id="experiment_name" name="experiment_name" type="text" value="">
+  
+</div>
+
+  <br><label>Upload Bioreactor Data File (.xls or .xlsx):</label><br>
+  <input type="file" id="file" name="file_br" accept=".xls, .xlsx" required></input><p></p>`;
+    
+
+  <input type="submit" onclick = geek() value="Push to Database" class="btn btn-primary" style="background-color:#006fba;border-color:#006fba">
+
+<p></p>
+
+</form>
+
+</div>
+
+<script>
+  function geek() {
+      confirm('Press OK to close this option');
+      
+  }
+</script>
+
+{% endblock %}
+
+

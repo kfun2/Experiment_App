@@ -1,0 +1,633 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<script>
+  document.getElementById('pills-nav').style.display = 'none';
+</script>
+
+<style>
+    #tabl {
+        border-collapse: collapse;
+        width: 96%;
+    }
+    #tabl td, #tabl th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    #tabl tr:nth-child(even){background-color: #f2f2f2;}
+    #tabl tr:hover {background-color: #ddd;}
+    #tabl th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #006fba;
+        color: white;
+    }
+    #runs_table {
+        border-collapse: collapse;
+        width: 96%;
+    }
+    #runs_table td, #runs_table th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    #runs_table tr:nth-child(even){background-color: #f2f2f2;}
+    #runs_table tr:hover {background-color: #ddd;}
+    #runs_table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #006fba;
+        color: white;
+    }
+    #timepoints_table {
+        border-collapse: collapse;
+        width: 96%;
+    }
+    #timepoints_table td, #timepoints_table th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    #timepoints_table tr:nth-child(even){background-color: #f2f2f2;}
+    #timepoints_table tr:hover {background-color: #ddd;}
+    #timepoints_table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #006fba;
+        color: white;
+    }
+    #addition_table {
+        border-collapse: collapse;
+        width: 96%;
+    }
+    #addition_table td, #addition_table th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    #addition_table tr:nth-child(even){background-color: #f2f2f2;}
+    #addition_table tr:hover {background-color: #ddd;}
+    #addition_table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #006fba;
+        color: white;
+    }
+    .center {
+            margin-left: auto;
+            margin-right: auto;
+    }
+</style>
+<div class="scrollwrapper" style="margin-left:0.5%">
+<br>
+<h4>Data Summary</h4>
+<hr>
+
+
+<div id="experiments_div">
+<h6 style="font-size:18px">Experiments Summary</h6>
+<table id="tabl" class="center" style="width:100%;font-size:18px">
+    <thead>
+      <tr style="font-size:16px">
+        <th scope="col" width="100px">ID</th>
+        <th scope="col" width="150px">Date</th>
+        <th scope="col" width="50%">Experiment Name</th>
+        <th scope="col">Generate Report for this Experiment</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entry in experiment_data %}
+      <tr>
+      <th style="font-size:16px">{{entry.id}}
+      </th>
+      <td>{{entry.date1}}
+      </td>
+      <td>{{entry.experiment_name}}
+      </td>
+      <td>
+        <button id="{{entry.id}}" onclick="runs(this.id)" class="btn btn-primary btn-sm" style="background-color:#006fba;border-color:#006fba">See Runs</button>
+      </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <hr>
+
+</div>
+
+
+
+  <div id="runs_div" style="display:none">
+  <h6 style="font-size:18px">Runs Summary</h6>
+  <table id="runs_table" class="center" style="width:1000%;font-size:18px">
+    <thead>
+        <tr style="font-size:16px">
+          <th scope="col">Generate Report of Timepoints</th>
+          <th scope="col">Generate Report of Additions</th>
+          <th scope="col">Process Version Name</th>
+          <th scope="col">Run Name</th>
+          <th scope="col">Reactor ID</th>
+          <th scope="col">Process Description</th>
+          <th scope="col">Product</th>
+          <th scope="col">Strain</th>
+          <th scope="col">Site of Run</th>
+          <th scope="col">Scale Litter</th>
+          <th scope="col">Number of Seed Stages</th>
+          <th scope="col">Seed Train Run ID</th>
+          <th scope="col">Feed Medium Concentration</th>
+          <th scope="col">Batch Temperature Setpoint (Celcius)</th>
+          <th scope="col">Fed Batch Temperature Setpoint (Celcius)</th>
+          <th scope="col">Induction Temperature Setpoint (Celcius)</th>
+          <th scope="col">Batch Phase pH Setpoint</th>
+          <th scope="col">Fed Batch pH Setpoint</th>
+          <th scope="col">Induction pH Setpoint</th>
+          <th scope="col">Batch Phase Do Setpoint</th>
+          <th scope="col">Fed Batch Do Setpoint</th>
+          <th scope="col">Induction Do Setpoint</th>
+          <th scope="col">Target Batch Phase Airflow (VVM)</th>
+          <th scope="col">Target Fed Batch Phase Airflow (VVM)</th>
+          <th scope="col">Foam Control</th>
+          <th scope="col">Inducer</th>
+          <th scope="col">Target Batch Volume (mL)</th>
+          <th scope="col">Target Pre-Induction Volume (mL)</th>
+          <th scope="col">Target Final Volume (mL)</th>
+          <th scope="col">Target Final Volume w/ Drawdown (mL)</th>
+          <th scope="col">Seed Media</th>
+          <th scope="col">Feed Media 1</th>
+          <th scope="col">Feed Media 1 Density (g/L)</th>
+          <th scope="col">Target Time to Add Feed Media 1 Post Feed Start H</th>
+          <th scope="col">Feed Media 2</th>
+          <th scope="col">Target Time to Add Feed Media 2 Post Feed Start H</th>
+          <th scope="col">Estimated Batch Timing H</th>
+          <th scope="col">Target Post Feed Duration Until Temp Shift H</th>
+          <th scope="col">Target Post Feed Duration Until Induction H</th>
+          <th scope="col">Target Induction Duration H</th>
+          <th scope="col">Growth Feed Rate 1 M H 1</th>
+          <th scope="col">Growth Feed Rate 1 Post Feed Target Time H</th>
+          <th scope="col">Growth Feed Rate 1 Type</th>
+          <th scope="col">Growth Feed Rate 2 M H 1</th>
+          <th scope="col">Growth Feed Rate 2 Post Feed Target Time H</th>
+          <th scope="col">Growth Feed Rate 2 Type</th>
+          <th scope="col">Induction Feed Rate M H 1</th>
+          <th scope="col">Induction Feed Profile Type</th>
+          <th scope="col">Induction Phase Feed Interval H</th>
+          <th scope="col">Post Feed Time of Percent Drawdown H</th>
+          <th scope="col">Drawdown at Post Feed Time (Percent)</th>
+          <th scope="col">Initial Batch Vol Litter</th>
+          <th scope="col">X0 Grams Over Litter</th>
+          <th scope="col">SF Feed Gluc Grams Over Litter</th>
+          <th scope="col">S0 Batch Gluc Grams Over Litter</th>
+          <th scope="col">YX Over S Grams Over Grams</th>
+          <th scope="col">OD Over Gram Dry WT Over Litter</th>
+          <th scope="col">Growth Phase Feed Interval H</th>
+          <th scope="col">Feed Profile Type</th>
+          <th scope="col">Actual Inoculation Time</th>
+          <th scope="col">Actual Fed Batch Start Time</th>
+          <th scope="col">Actual Induction Start Time</th>
+          <th scope="col">Target Induction Duration 1 H</th>
+          <th scope="col">Addition on Scale/Pump 1</th>
+          <th scope="col">Addition on Scale/Pump 2</th>
+          <th scope="col">Run Outcome</th>
+        </tr>
+      </thead>
+  </table>
+
+    <hr>
+
+  </div>
+
+      <div id="timepoints_div" style="display:none">
+    <h6 style="font-size:18px">Timepoints Summary</h6>
+    <table id="timepoints_table" class="center" style="width:1000%;font-size:18px">
+      <thead>
+          <tr style="font-size:16px">
+            <th scope="col">Run Name</th>
+            <th scope="col">Ferm Sample ID</th>
+            <th scope="col">Reactor ID Temp</th>
+            <th scope="col">Ferm Stage</th>
+            <th scope="col">Notes</th>
+            <th scope="col">EFT H</th>
+            <th scope="col">Time Post Induction H</th>
+            <th scope="col">Rounded Post Induction Time H</th>
+            <th scope="col">Post Feed Start Time H</th>
+            <th scope="col">O2 Flow Percent</th>
+            <th scope="col">Total Gas Flow SLPM</th>
+            <th scope="col">Base Totalizer (mL)</th>
+            <th scope="col">Base Consumed (g)</th>
+            <th scope="col">Feed Weight (g)</th>
+            <th scope="col">Amount of Feed Added (g)</th>
+            <th scope="col">Amount of Feed Added (mL)</th>
+            <th scope="col">Antifoam Weight (g)</th>
+            <th scope="col">Scale 1 Weight (g)</th>
+            <th scope="col">Pump 1 (RPM)</th>
+            <th scope="col">Rate from Scale 1 (g/h)</th>
+            <th scope="col">Scale 2 Weight (g)</th>
+            <th scope="col">Pump 2 (RPM)</th>
+            <th scope="col">Rate from Scale 2 (g/h)</th>
+            <th scope="col">Offline pH</th>
+            <th scope="col">OD 595</th>
+            <th scope="col">OD Bio HT</th>
+            <th scope="col">Bio HT Glucose (g/L)</th>
+            <th scope="col">Bio HT Lactate (mmol)</th>
+            <th scope="col">Bio HT Acetate (mmol)</th>
+            <th scope="col">Bio HT Ammonia (mmol)</th>
+            <th scope="col">Bio HT Glutamine (mmol)</th>
+            <th scope="col">Bio HT Glutamate (mmol)</th>
+            <th scope="col">Bio HT Phosphate (mmol)</th>
+            <th scope="col">Bio HT Magnesium (mmol)</th>
+            <th scope="col">OSM MOSM (kg)</th>
+            <th scope="col">Bio HT Arabinose (mg/L)</th>
+            <th scope="col">AF Added (mL)</th>
+            <th scope="col">AF Totalizer (mL)</th>
+            <th scope="col">Theoretical Amount of Feed Added (mL)</th>
+            <th scope="col">Percent Diff in Feed</th>
+            <th scope="col">Online pH</th>
+            <th scope="col">Broth Viscosity Ranking</th>
+            <th scope="col">Bio HT Pyruvate (mmol)</th>
+            <th scope="col">Total Amount of Antifoam Added (mL)</th>
+            <th scope="col">Bio HT LDH U (L)</th>
+            <th scope="col">Bio HT IGG (mg/L)</th>
+            <th scope="col">Bio HT Total Protein (g/L)</th>
+            <th scope="col">Sodium</th>
+            <th scope="col">Potassium</th>
+            <th scope="col">Bio HT Formate (mg/L)</th>
+            <th scope="col">Percent CO2</th>
+            <th scope="col">Bio HT Glycerol (mg/L)</th>
+            <th scope="col">Datetime</th>
+            <th scope="col">Gel Titer (g/L)</th>
+          </tr>
+        </thead>
+        <tbody id="timepoints_tbody">
+        </tbody>
+    </table>
+
+    <hr>
+      
+  </div>
+
+    
+  <div id="addition_div" style="display:none">
+    <h6 style="font-size:18px">Additions Summary</h6>
+    <table id="addition_table" class="center" style="width:500%;font-size:18px">
+      <thead>
+          <tr style="font-size:16px">
+            <th scope="col">Run Name</th>
+            <th scope="col">Process Version Name</th>
+            <th scope="col">Target Phase Addition</th>
+            <th scope="col">Addition Name</th>
+            <th scope="col">Nth Addition</th>
+            <th scope="col">Target Batch Concentration (mL L)</th>
+            <th scope="col">Target Amount (mL)</th>
+            <th scope="col">Target Phase Time H</th>
+            <th scope="col">Actual Amount Added (mL)</th>
+            <th scope="col">Actual Start Time of Addition</th>
+            <th scope="col">Actual Stop Time of Addition</th>
+            <th scope="col">Addition Lot ID</th>
+            <th scope="col">Addition Type</th>
+            <th scope="col">Target Addition Rate mL H L0</th>
+            <th scope="col">Target Addition Rate mL H</th>
+            <th scope="col">Actaul Addition Rate mL H</th>
+          </tr>
+        </thead>
+        <tbody id="additions_tbody">
+        </tbody>
+    </table>
+  
+
+    <hr>
+
+
+</div>
+
+<script>
+    // creates and shows table of runs for given experiment
+    function runs(exp_id) {
+        document.getElementById('timepoints_div').style.display = 'none';
+        document.getElementById('addition_div').style.display = 'none';
+        var runs_table = document.getElementById('runs_table');
+        var experiment_data = JSON.parse('{{experiment_data | tojson}}');
+        var run_data = JSON.parse('{{run_data | tojson}}');
+        $("#runs_table").find("tr:not(:first)").remove();
+        for (let i = 0; i < run_data.length; i++) {
+            curr_run = run_data[i]
+            if (Number(curr_run.experiment_id) == Number(exp_id)) {
+                var row = runs_table.insertRow(-1);
+                var cell0 = row.insertCell(0);
+                cell0.innerHTML = '<button onclick="timepoints(' + curr_run.id + ')" class="btn btn-primary btn-sm" style="background-color:#006fba;border-color:#006fba">See Timepoints</button>';
+                var cell1 = row.insertCell(1);
+                cell1.innerHTML = '<button onclick="additions(' + curr_run.id + ')" class="btn btn-primary btn-sm" style="background-color:#006fba;border-color:#006fba">See Additions</button>';
+                var cell2 = row.insertCell(2);
+                cell2.innerHTML = curr_run.process_version_name;
+                var cell3 = row.insertCell(3);
+                cell3.innerHTML = curr_run.run_name;
+                var cell4 = row.insertCell(4);
+                cell4.innerHTML = curr_run.reactor_id;
+                var cell5 = row.insertCell(5);
+                cell5.innerHTML = curr_run.process_description;
+                var cell6 = row.insertCell(6);
+                cell6.innerHTML = curr_run.product;
+                var cell7 = row.insertCell(7);
+                cell7.innerHTML = curr_run.strain;
+                var cell8 = row.insertCell(8);
+                cell8.innerHTML = curr_run.site_of_run;
+                var cell9 = row.insertCell(9);
+                cell9.innerHTML = curr_run.scale_litter;
+                var cell10 = row.insertCell(10);
+                cell10.innerHTML = curr_run.number_of_seed_stages;
+                var cell11 = row.insertCell(11);
+                cell11.innerHTML = curr_run.seed_train_run_id;
+                var cell12 = row.insertCell(12);
+                cell12.innerHTML = curr_run.feed_medium_concentration;
+                var cell13 = row.insertCell(13);
+                cell13.innerHTML = curr_run.batch_temperature_setpoint_celcius;
+                var cell14 = row.insertCell(14);
+                cell14.innerHTML = curr_run.fed_batch_temperature_setpoint_celcius;
+                var cell15 = row.insertCell(15);
+                cell15.innerHTML = curr_run.induction_temperature_setpoint_celcius;
+                var cell16 = row.insertCell(16);
+                cell16.innerHTML = curr_run.batch_phase_ph_setpoint;
+                var cell17 = row.insertCell(17);
+                cell17.innerHTML = curr_run.fed_batch_ph_setpoint;
+                var cell18 = row.insertCell(18);
+                cell18.innerHTML = curr_run.induction_ph_setpoint;
+                var cell19 = row.insertCell(19);
+                cell19.innerHTML = curr_run.batch_phase_do_setpoint;
+                var cell20 = row.insertCell(20);
+                cell20.innerHTML = curr_run.fed_batch_do_setpoint;
+                var cell21 = row.insertCell(21);
+                cell21.innerHTML = curr_run.induction_do_setpoint;
+                var cell22 = row.insertCell(22);
+                cell22.innerHTML = curr_run.target_batch_phase_airflow_vvm;
+                var cell23 = row.insertCell(23);
+                cell23.innerHTML = curr_run.target_fed_batch_phase_airflow_vvm;
+                var cell24 = row.insertCell(24);
+                cell24.innerHTML = curr_run.foam_control;
+                var cell25 = row.insertCell(25);
+                cell25.innerHTML = curr_run.inducer;
+                var cell26 = row.insertCell(26);
+                cell26.innerHTML = curr_run.target_batch_volume_ml;
+                var cell27 = row.insertCell(27);
+                cell27.innerHTML = curr_run.target_pre_induction_volume_ml;
+                var cell28 = row.insertCell(28);
+                cell28.innerHTML = curr_run.target_final_volume_ml;
+                var cell29 = row.insertCell(29);
+                cell29.innerHTML = curr_run.target_final_volume_w_drawdown_ml;
+                var cell30 = row.insertCell(30);
+                cell30.innerHTML = curr_run.seed_media;
+                var cell31 = row.insertCell(31);
+                cell31.innerHTML = curr_run.feed_media_1;
+                var cell32 = row.insertCell(32);
+                cell32.innerHTML = curr_run.feed_media_1_density;
+                var cell33 = row.insertCell(33);
+                cell33.innerHTML = curr_run.target_time_to_add_feed_media_1_post_feed_start_h;
+                var cell34 = row.insertCell(34);
+                cell34.innerHTML = curr_run.feed_media_2;
+                var cell35 = row.insertCell(35);
+                cell35.innerHTML = curr_run.target_time_to_add_feed_media_2_post_feed_start_h;
+                var cell36 = row.insertCell(36);
+                cell36.innerHTML = curr_run.estimated_batch_timing_h;
+                var cell37 = row.insertCell(37);
+                cell37.innerHTML = curr_run.target_post_feed_duration_until_temp_shift_h;
+                var cell38 = row.insertCell(38);
+                cell38.innerHTML = curr_run.target_post_feed_duration_until_induction_h;
+                var cell39 = row.insertCell(39);
+                cell39.innerHTML = curr_run.target_induction_duration_h;
+                var cell40 = row.insertCell(40);
+                cell40.innerHTML = curr_run.growth_feed_rate_1_m_h_1;
+                var cell41 = row.insertCell(41);
+                cell41.innerHTML = curr_run.growth_feed_rate_1_post_feed_target_time_h;
+                var cell42 = row.insertCell(42);
+                cell42.innerHTML = curr_run.growth_feed_rate_1_type;
+                var cell43 = row.insertCell(43);
+                cell43.innerHTML = curr_run.growth_feed_rate_2_m_h_1;
+                var cell44 = row.insertCell(44);
+                cell44.innerHTML = curr_run.growth_feed_rate_2_post_feed_target_time_h;
+                var cell45 = row.insertCell(45);
+                cell45.innerHTML = curr_run.growth_feed_rate_2_type;
+                var cell46 = row.insertCell(46);
+                cell46.innerHTML = curr_run.induction_feed_rate_m_h_1;
+                var cell47 = row.insertCell(47);
+                cell47.innerHTML = curr_run.induction_feed_profile_type;
+                var cell48 = row.insertCell(48);
+                cell48.innerHTML = curr_run.induction_phase_feed_interval_h;
+                var cell49 = row.insertCell(49);
+                cell49.innerHTML = curr_run.post_feed_time_of_percent_drawdown_h;
+                var cell50 = row.insertCell(50);
+                cell50.innerHTML = curr_run.drawdown_at_post_feed_time_percent;
+                var cell51 = row.insertCell(51);
+                cell51.innerHTML = curr_run.initial_batch_vol_litter;
+                var cell52 = row.insertCell(52);
+                cell52.innerHTML = curr_run.x0_grams_over_litter;
+                var cell53 = row.insertCell(53);
+                cell53.innerHTML = curr_run.sf_feed_gluc_grams_over_litter;
+                var cell54 = row.insertCell(54);
+                cell54.innerHTML = curr_run.s0_batch_gluc_grams_over_litter;
+                var cell55 = row.insertCell(55);
+                cell55.innerHTML = curr_run.yx_over_s_grams_over_grams;
+                var cell56 = row.insertCell(56);
+                cell56.innerHTML = curr_run.od_over_gram_dry_wt_over_litter;
+                var cell57 = row.insertCell(57);
+                cell57.innerHTML = curr_run.growth_phase_feed_interval_h;
+                var cell58 = row.insertCell(58);
+                cell58.innerHTML = curr_run.feed_profile_type;
+                var cell59 = row.insertCell(59);
+                cell59.innerHTML = curr_run.actual_inoculation_time;
+                var cell60 = row.insertCell(60);
+                cell60.innerHTML = curr_run.actual_fed_batch_start_time;
+                var cell61 = row.insertCell(61);
+                cell61.innerHTML = curr_run.actual_induction_start_time;
+                var cell62 = row.insertCell(62);
+                cell62.innerHTML = curr_run.target_induction_duration_1_h;
+                var cell63 = row.insertCell(63);
+                cell63.innerHTML = curr_run.addition_on_scale_pump_1;
+                var cell64 = row.insertCell(64);
+                cell64.innerHTML = curr_run.addition_on_scale_pump_2;
+                var cell65 = row.insertCell(65);
+                cell65.innerHTML = curr_run.run_outcome;
+            }
+        }
+        document.getElementById('runs_div').style.display = 'block';
+    }
+</script>
+
+<script>
+    // creates and shows table of timepoints for given run
+    function timepoints(r_id) {
+        var timepoints_table = document.getElementById('timepoints_table');
+        var timepoint_data = JSON.parse('{{timepoint_data | tojson}}');
+        $("#timepoints_table").find("tr:not(:first)").remove();
+        for (let i = 0; i < timepoint_data.length; i++) {
+            curr_pt = timepoint_data[i]
+            if (Number(curr_pt.actual_run_id) == Number(r_id)) {
+                var row = timepoints_table.insertRow(-1);
+                var cell0 = row.insertCell(0);
+                cell0.innerHTML = curr_pt.run_id;
+                var cell1 = row.insertCell(1);
+                cell1.innerHTML = curr_pt.ferm_sample_id;
+                var cell2 = row.insertCell(2);
+                cell2.innerHTML = curr_pt.reactor_id_temp;
+                var cell3 = row.insertCell(3);
+                cell3.innerHTML = curr_pt.ferm_stage;
+                var cell4 = row.insertCell(4);
+                cell4.innerHTML = curr_pt.notes;
+                var cell5 = row.insertCell(5);
+                cell5.innerHTML = curr_pt.eft_h;
+                var cell6 = row.insertCell(6);
+                cell6.innerHTML = curr_pt.time_post_induction_h;
+                var cell7 = row.insertCell(7);
+                cell7.innerHTML = curr_pt.rounded_post_induction_time_h;
+                var cell8 = row.insertCell(8);
+                cell8.innerHTML = curr_pt.post_feed_start_time_h;
+                var cell9 = row.insertCell(9);
+                cell9.innerHTML = curr_pt.o2_flow_percent;
+                var cell10 = row.insertCell(10);
+                cell10.innerHTML = curr_pt.total_gas_flow_slpm;
+                var cell11 = row.insertCell(11);
+                cell11.innerHTML = curr_pt.base_totalizer_ml;
+                var cell12 = row.insertCell(12);
+                cell12.innerHTML = curr_pt.base_consumed_g;
+                var cell13 = row.insertCell(13);
+                cell13.innerHTML = curr_pt.feed_weight_g;
+                var cell14 = row.insertCell(14);
+                cell14.innerHTML = curr_pt.amount_of_feed_added_g;
+                var cell15 = row.insertCell(15);
+                cell15.innerHTML = curr_pt.amount_of_feed_added_ml;
+                var cell16 = row.insertCell(16);
+                cell16.innerHTML = curr_pt.antifoam_weight_g;
+                var cell17 = row.insertCell(17);
+                cell17.innerHTML = curr_pt.scale_1_weight_g;
+                var cell18 = row.insertCell(18);
+                cell18.innerHTML = curr_pt.pump_1_rpm;
+                var cell19 = row.insertCell(19);
+                cell19.innerHTML = curr_pt.rate_from_scale_1_g_h;
+                var cell20 = row.insertCell(20);
+                cell20.innerHTML = curr_pt.scale_2_weight_g;
+                var cell21 = row.insertCell(21);
+                cell21.innerHTML = curr_pt.pump_2_rpm;
+                var cell22 = row.insertCell(22);
+                cell22.innerHTML = curr_pt.rate_from_scale_2_g_h;
+                var cell23 = row.insertCell(23);
+                cell23.innerHTML = curr_pt.offline_ph;
+                var cell24 = row.insertCell(24);
+                cell24.innerHTML = curr_pt.od595;
+                var cell25 = row.insertCell(25);
+                cell25.innerHTML = curr_pt.od_bioht;
+                var cell26 = row.insertCell(26);
+                cell26.innerHTML = curr_pt.bioht_glucose_g_l;
+                var cell27 = row.insertCell(27);
+                cell27.innerHTML = curr_pt.bioht_lactate_mmol;
+                var cell28 = row.insertCell(28);
+                cell28.innerHTML = curr_pt.bioht_acetate_mmol;
+                var cell29 = row.insertCell(29);
+                cell29.innerHTML = curr_pt.bioht_ammonia_mmol;
+                var cell30 = row.insertCell(30);
+                cell30.innerHTML = curr_pt.bioht_glutamine_mmol;
+                var cell31 = row.insertCell(31);
+                cell31.innerHTML = curr_pt.bioht_glutamate_mmol;
+                var cell32 = row.insertCell(32);
+                cell32.innerHTML = curr_pt.bioht_phosphate_mmol;
+                var cell33 = row.insertCell(33);
+                cell33.innerHTML = curr_pt.bioht_magnesium_mmol;
+                var cell34 = row.insertCell(34);
+                cell34.innerHTML = curr_pt.osm_mosm_kg;
+                var cell35 = row.insertCell(35);
+                cell35.innerHTML = curr_pt.bioht_arabinose_mg_l;
+                var cell36 = row.insertCell(36);
+                cell36.innerHTML = curr_pt.af_added_ml;
+                var cell37 = row.insertCell(37);
+                cell37.innerHTML = curr_pt.af_totalizer_ml;
+                var cell38 = row.insertCell(38);
+                cell38.innerHTML = curr_pt.theoretical_amount_of_feed_added_ml;
+                var cell39 = row.insertCell(39);
+                cell39.innerHTML = curr_pt.percent_diff_in_feed;
+                var cell40 = row.insertCell(40);
+                cell40.innerHTML = curr_pt.online_ph;
+                var cell41 = row.insertCell(41);
+                cell41.innerHTML = curr_pt.broth_viscosity_ranking;
+                var cell42 = row.insertCell(42);
+                cell42.innerHTML = curr_pt.bioht_pyruvate_mmol;
+                var cell43 = row.insertCell(43);
+                cell43.innerHTML = curr_pt.total_amount_of_antifoam_added_ml;
+                var cell44 = row.insertCell(44);
+                cell44.innerHTML = curr_pt.bioht_ldh_u_l;
+                var cell45 = row.insertCell(45);
+                cell45.innerHTML = curr_pt.bioht_igg_mg_l;
+                var cell46 = row.insertCell(46);
+                cell46.innerHTML = curr_pt.bioht_total_protein_g_l;
+                var cell47 = row.insertCell(47);
+                cell47.innerHTML = curr_pt.sodium;
+                var cell48 = row.insertCell(48);
+                cell48.innerHTML = curr_pt.potassium;
+                var cell49 = row.insertCell(49);
+                cell49.innerHTML = curr_pt.bioht_formate_mg_l;
+                var cell50 = row.insertCell(50);
+                cell50.innerHTML = curr_pt.percent_co2;
+                var cell51 = row.insertCell(51);
+                cell51.innerHTML = curr_pt.bioht_glycerol_mg_l;
+                var cell52 = row.insertCell(52);
+                cell52.innerHTML = curr_pt.datetime;
+                var cell53 = row.insertCell(53);
+                cell53.innerHTML = curr_pt.gel_titer_g_l;
+            }
+        }
+        document.getElementById('timepoints_div').style.display = 'block';
+    }
+</script>
+
+<script>
+  // creates and shows table of additions for given run
+  function additions(r_id) {
+      var addition_table = document.getElementById('addition_table');
+      var addition_data = JSON.parse('{{addition_data | tojson}}');
+        $("#addition_table").find("tr:not(:first)").remove();
+        for (let i = 0; i < addition_data.length; i++) {
+            curr_add = addition_data[i];
+            if (Number(curr_add.actual_run_id) == Number(r_id)) {
+                var row = addition_table.insertRow(-1);
+                var cell0 = row.insertCell(0);
+                cell0.innerHTML = curr_add.run_id;
+                var cell1 = row.insertCell(1);
+                cell1.innerHTML = curr_add.process_version_name;
+                var cell2 = row.insertCell(2);
+                cell2.innerHTML = curr_add.target_phase_of_addition;
+                var cell3 = row.insertCell(3);
+                cell3.innerHTML = curr_add.addition_name;
+                var cell4 = row.insertCell(4);
+                cell4.innerHTML = curr_add.nth_addition;
+                var cell5 = row.insertCell(5);
+                cell5.innerHTML = curr_add.target_batch_concentration_ml_l;
+                var cell6 = row.insertCell(6);
+                cell6.innerHTML = curr_add.target_amount_ml;
+                var cell7 = row.insertCell(7);
+                cell7.innerHTML = curr_add.target_phase_time_h;
+                var cell8 = row.insertCell(8);
+                cell8.innerHTML = curr_add.actual_amount_added_ml;
+                var cell9 = row.insertCell(9);
+                cell9.innerHTML = curr_add.actual_start_time_of_addition;
+                var cell10 = row.insertCell(10);
+                cell10.innerHTML = curr_add.actual_stop_time_of_addition;
+                var cell11 = row.insertCell(11);
+                cell11.innerHTML = curr_add.addition_lot_id;
+                var cell12 = row.insertCell(12);
+                cell12.innerHTML = curr_add.addition_type;
+                var cell13 = row.insertCell(13);
+                cell13.innerHTML = curr_add.target_addition_rate_ml_h_l0;
+                var cell14 = row.insertCell(14);
+                cell14.innerHTML = curr_add.target_addition_rate_ml_h;
+                var cell15 = row.insertCell(15);
+                cell15.innerHTML = curr_add.actual_addition_rate_ml_h;
+            }
+          }
+          document.getElementById('addition_div').style.display = 'block';
+    }
+</script>
+
+<script>
+    $(document).ready( function () {
+    $('#tabl').DataTable();
+} );
+</script>
+
+{% endblock %}

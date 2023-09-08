@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<script>
+    document.getElementById('pills-nav').style.display = 'none';
+  </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.css">
+
+
+<div style="margin-left:0.5%">
+<br>
+<h4>Online Bioreactor Data Upload</h4>
+<hr>
+<div id="loading" style="display:none">
+  <p></p>
+  <p style="text-align:center">
+  <h6>&nbsp;Parsing and uploading data...</h6>
+  <img width="150px" src="../static/loading.gif">
+</p>
+</div>
+<div id="content">
+<p></p>
+  <form enctype="multipart/form-data" id="my-form" action="{{ url_for('online_bioreactor_data_upload_submitted') }}" method="post" class="form" role="form">
+    
+    <p>
+      <label for="num_runs">Number of Runs</label>
+      <input onchange="create_table()" id="num_runs" name="num_runs" required step="any" type="number" value="">
+  </p>
+
+
+  <table id="my_table1" style="width:50%">
+    <thead>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<p style="display:none" id="show"></p>
+
+
+    <input onclick="loading()" id="sub" type="submit" value="Parse Data & Push to Database" class="btn btn-primary" style="background-color:#006fba;border-color:#006fba">
+
+  <p></p>
+  <p></p>
+
+  </form>
+
+</div>
+
+</div>
+
+<script src="https://unpkg.com/read-excel-file@5.x/bundle/read-excel-file.min.js"></script>
+
+<script>
+  function create_table() {
+      // creates table of file upload buttons when number of runs field is filled in
+      $("#my_table1 tr").remove(); 
+      var tabl = document.getElementById('my_table1');
+      let num_runs = Number(document.getElementById('num_runs').value)
+      for (let i = 0; i < num_runs; i++) {
+          row = tabl.insertRow(-1);
+          var cell = row.insertCell(0);
+          cell.innerHTML = `<div class="form-group "><label class="control-label" for="run_id">Run Name</label><br>
+            
+            
+            <select style="width:500px" required onchange="check_if_already_run_name(this.name)" class="chzn-select" id="run_id"   name="run_id_${i}">
+                  
+                  <option disabled selected value> -- select an option -- </option>
+                  {% for i in range(run_names_lst | length) %}
+                  <option value="{{run_names_lst[i]}}">{{run_names_lst[i]}}</option>
+                  {% endfor %}
+
+                </select>
+
+            </div>
+
+            <label>Upload Bioreactor Data File (.xls or .xlsx):</label><br>
+            <label>Choose Reactor or Data Source System </label><br>
+            <input type="file" id="file" name="file_${i}" accept=".xls, .xlsx" required></input><p></p>`;
+      }
+      make_chosen();
+      document.getElementById('show').style.display = 'block';
+  }
+</script>
+
+<script>
+  // if the run name selected is already in mfcs_qs, ask user to confirm
+  function check_if_already_run_name(select_name) {
+    var run_data = JSON.parse('{{run_data | tojson}}');
+    for (let i = 0; i < run_data.length; i++) {
+      curr_run = run_data[i]
+      if (document.getElementById('run_id').value === curr_run.run_id) {
+        if (confirm(`A file has already been uploaded for Run ID "${curr_run.run_id}"\nPress OK to overwrite existing file, press Cancel to select new run`) == false) {
+          document.getElementsByName(select_name)[0].selectedIndex = 0;
+        }
+      }
+    }
+  }
+</script>
+
+<script>
+  // loading page
+  function loading(){
+      document.getElementById('content').style.display = 'none'
+      document.getElementById('loading').style.display = 'block'    
+  }
+</script>
+
+
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.min.css">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.jquery.min.js"></script>
+
+<script>
+    // allows us to filter out results in run id select fields
+    function make_chosen() {
+        $(".chzn-select").chosen();
+    }
+</script>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<script>
+    document.getElementById('pills-nav').style.display = 'none';
+</script>
+
+<div style="margin-left:0.5%">
+<br>
+<h4>Record Experimental Data</h4>
+<hr>
+<form action="{{ url_for('new_experiment') }}" method="post"
+class="form" role="form">
+<input id="csrf_token" name="csrf_token" type="hidden" value="Ijk2Y2Q2NTg1ZWEzMTU2NDVhMjJmMmQyM2M4MjVhYzQxMDE1Mjg2ZDAi.Ys9YlQ.tLi8tj8vkaAR2mKH4XswS4OTsVQ">
+<h6 style="font-size:18px">Select Number of Runs for New Experiment</h6>
+<p>
+    <label for="num_runs">Number of Runs</label>
+    <input onchange="create_table()" id="num_runs" name="num_runs" required step="1" type="number" value="">
+</p>
+
+<div id="show" style="display:none">
+<h6 style="font-size:18px">Select Number of Timepoints per Run</h6>
+<table id="my_table1">
+    <thead>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+<div id="submit-button"></div>
+</div>
+
+<br>
+
+
+
+</form>
+
+  </form>
+
+</div>
+
+<br>
+
+</div>
+
+<script>
+    // creates table of form fields (for number of timepoints) when number of runs field is filled in
+    function create_table() {
+        $("#my_table1 tr").remove(); 
+        var num_timepoints_table = document.getElementById('my_table1');
+        let num_runs = Number(document.getElementById('num_runs').value)
+        var row = num_timepoints_table.insertRow(-1);
+        j = 0;
+        for (let i = 0; i < num_runs; i++) {
+            if (i % 6 == 0 && i != 0) {
+                row = num_timepoints_table.insertRow(-1);
+                j = 0;
+            }
+            var cell = row.insertCell(j);
+            cell.innerHTML = '<p><label for="num_timepoints' + i + '">Number of Timepoints for Run ' + (i+1) + '</label><br><input id="num_timepoints' + i + '" name="num_timepoints' + i + '" required step="any" type="number" value=""></p>';
+            j++;
+        }
+        var d = document.getElementById('submit-button')
+        d.innerHTML = '<p></p><input type="submit" value="Create New Experiment" class="btn btn-primary" style="background-color:#006fba;border-color:#006fba">'
+        document.getElementById('show').style.display = 'block';
+    }
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>PD Upstream Portal</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.css"/>
+
+    <style>
+        .parent {
+            margin: 1rem;
+        }
+        .child {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        #my_table1 {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        #my_table1 td, #my_table1 th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        #my_table1 tr:nth-child(even){background-color: #f2f2f2;}
+        #my_table1 tr:hover {background-color: #ddd;}
+        #my_table1 th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #006fba;
+            color: white;
+        }
+        #my_table2 {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        #my_table2 td, #my_table2 th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        #my_table2 tr:nth-child(even){background-color: #f2f2f2;}
+        #my_table2 tr:hover {background-color: #ddd;}
+        #my_table2 th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #006fba;
+            color: white;
+        }
+        #my_table3 {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        #my_table3 td, #my_table3 th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        #my_table3 th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #006fba;
+            color: white;
+        }
+        .my_table4 {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .my_table4 td, .my_table4 th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .my_table4 th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #006fba;
+            color: white;
+        }
+        .scrollwrapper {
+            height: calc(100vh - 59px);
+            overflow: auto;  
+        }
+        .nav-pills .nav-link.active {
+            background-color: #006fba;
+        }
+        .nav-pills .nav-link {
+            color: #006fba;
+        }
+        .space {
+            width: 6px;
+            height: auto;
+            display: inline-block;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="d-flex toggled" id="wrapper">
+    <div class="bg-light border-right d-none d-md-block" id="sidebar-wrapper">
+        <div class="sidebar-heading">PD Upstream Portal</div>
+        <div class="list-group list-group-flush">
+            <a class="list-group-item list-group-item-action bg-light" href="{{ url_for('home') }}">Record Experimental Data</a>
+            <a class="list-group-item list-group-item-action bg-light" href="{{ url_for('upload_ferm_batch_record') }}">Upload Ferm Data</a>
+            <a class="list-group-item list-group-item-action bg-light" href="{{ url_for('seed_stage_home') }}">Record Seed Stage Data</a>
+            <a class="list-group-item list-group-item-action bg-light" href="{{ url_for('online_bioreactor_data_upload') }}">Online Bioreactor Upload</a>
+            <a class="list-group-item list-group-item-action bg-light" href="{{ url_for('upload_online_bioreactor_data') }}">Upload Online Bioreactor Data</a>
+            <a class="list-group-item list-group-item-action bg-light" href="{{ url_for('summary') }}">Experimental Data Summary</a>
+            <a class="list-group-item list-group-item-action bg-light" href="{{ url_for('select_runs_online_br_spotfire') }}">Select Runs for Online Bioreactor Data for Spotfire</a>
+            <a class="list-group-item list-group-item-action bg-light" href="{{ url_for('select_runs_summary') }}">Select Runs</a>
+
+        </div>
+    </div>
+    
+
+    <div id="page-content-wrapper">
+        <nav id="main-nav-bar" class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <button class="btn btn-primary" id="menu-toggle" style="background-color:#006fba;border-color:#006fba;box-shadow:none;">&#9776;</button>
+            <p>&nbsp;&nbsp;</p>
+            <ul class="nav nav-pills" id="pills-nav">
+                <li class="nav-item">
+                  <a data-toggle="tab" href="#" class="nav-link active" onclick="switch_to_sutro()">Sutro Production Batch Record</a>
+                </li>
+                <!--<li class="nav-item">
+                  <a data-toggle="tab" href="#" class="nav-link active" onclick="switch_to_uploadfile()">Upload File for Ferm Batch Record</a>
+                </li> -->
+                <li class="nav-item">
+                  <a data-toggle="tab" href="#" class="nav-link" onclick="switch_to_additions()">Production Additions</a>
+                </li>
+                <li class="nav-item">
+                  <a data-toggle="tab" href="#" class="nav-link" onclick="switch_to_timepoints()">Growth Data</a>
+                </li>
+              </ul>
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#5e637a;margin-left:auto;margin-right:-1.5%">
+               Edit/Add Process Versions
+           </a>
+           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" style="color:#5e637a;" href="{{ url_for('batch_process_edit') }}">Edit Batch Process Version</a>
+            <a class="dropdown-item" style="color:#5e637a;" href="{{ url_for('batch_process_add') }}">Add Batch Process Version</a>
+            <a class="dropdown-item" style="color:#5e637a;" href="{{ url_for('addition_process_edit') }}">Edit Addition Process Version</a>
+            <a class="dropdown-item" style="color:#5e637a;" href="{{ url_for('addition_process_add') }}">Add Addition Process Version</a>
+            <a class="dropdown-item" style="color:#5e637a;" href="{{ url_for('condition_process_edit') }}">Edit Condition Process Version</a>
+            <a class="dropdown-item" style="color:#5e637a;" href="{{ url_for('condition_process_add') }}">Add Condition Process Version</a>
+           </div>
+        </nav>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/4.1.0/js/dataTables.fixedColumns.min.js"></script>
+    <script src="//rawgithub.com/indrimuska/jquery-editable-select/master/dist/jquery-editable-select.min.js"></script>
+<link href="//rawgithub.com/indrimuska/jquery-editable-select/master/dist/jquery-editable-select.min.css" rel="stylesheet">
+
+        <div class="container-fluid">
+            <div class="content">
+                {% block content %} {% endblock %}
+            </div>
+    </div>
+
+
+    <script>
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<script>
+    document.getElementById('pills-nav').style.display = 'none';
+  </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.css">
+    <head>
+        <script src=
+"https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+      </script>
+  
+        <!--These jQuery libraries for 
+           chosen need to be included-->
+        <script src=
+"https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js">
+        </script>
+        <link rel="stylesheet" 
+              href=
+"https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.min.css" />
+  
+        <!--These jQuery libraries for select2 
+            need to be included-->
+        <script src=
+"https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js">
+       </script>
+        <link rel="stylesheet" 
+              href=
+"https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" />
+        <script>
+            $(document).ready(function () {
+                
+                //Chosen
+                $(".country1").chosen({
+                    max_selected_options: 1000,
+                });
+                //Select2
+                $(".select-1").chosen({
+                    max_selected_options: 1000,
+                });
+            });
+        </script>
+    </head>
+    <body>
+
+        <form action="/select_runs_summary_download" method="POST">
+            <div class="form-group "><label class="control-label" for="growth_fields">Select Parameters</label><br>
+
+            <select class="country1" 
+                    multiple="true" 
+                    style="width: 200px;"
+                    id = "growth_fields"
+                    name = "growth_fields">
+                <!--<option value="1">India</option> -->
+                <option disabled selected value> -- select an option -- </option>
+                {% for i in range(growth_fields | length) %}
+                <option value="{{growth_fields[i]}}">{{growth_fields[i]}}</option>
+                {% endfor %}
+            </select>
+
+
+
+            <div class="form-group "><label class="control-label" for="run_id">Select Run Names</label><br>
+              
+              
+                <select style="width:500px"  class="select-1" multiple ="true" id="run_id" name="run_ids">
+                      
+                      <option disabled selected value> -- select an option -- </option>
+                      {% for i in range(run_names_lst | length) %}
+                      <option value="{{run_names_lst[i]}}">{{run_names_lst[i]}}</option>
+                      {% endfor %}
+    
+                    </select>
+    
+                </div>
+                <label>Download File</label><br>
+              <input type="Submit" value="Download CSV" >
+
+              <!--<input onclick="loading()" id="sub" type="submit" value="Parse Data & Push to Database" class="btn btn-primary" style="background-color:#006fba;border-color:#006fba" required> -->
+          
+     
+
+        </form>
+    </body>
+
+ 
+
+    {% endblock %}

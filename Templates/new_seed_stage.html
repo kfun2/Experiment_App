@@ -1,0 +1,1391 @@
+{% import "bootstrap/wtf.html" as wtf %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>PD Upstream Portal</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.css"/>
+
+    <style>
+        .parent {
+            margin: 1rem;
+        }
+        .child {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        #my_table1 {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        #my_table1 td, #my_table1 th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        #my_table1 tr:nth-child(even){background-color: #f2f2f2;}
+        #my_table1 tr:hover {background-color: #ddd;}
+        #my_table1 th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #006fba;
+            color: white;
+        }
+        #my_table2 {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        #my_table2 td, #my_table2 th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        #my_table2 tr:nth-child(even){background-color: #f2f2f2;}
+        #my_table2 tr:hover {background-color: #ddd;}
+        #my_table2 th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #006fba;
+            color: white;
+        }
+        #my_table3 {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        #my_table3 td, #my_table3 th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        #my_table3 th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #006fba;
+            color: white;
+        }
+        .my_table4 {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .my_table4 td, .my_table4 th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .my_table4 th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #006fba;
+            color: white;
+        }
+        .scrollwrapper {
+            height: calc(100vh - 59px);
+            overflow: auto;  
+        }
+        .nav-pills .nav-link.active {
+            background-color: #006fba;
+        }
+        .nav-pills .nav-link {
+            color: #006fba;
+        }
+        .space {
+            width: 6px;
+            height: auto;
+            display: inline-block;
+        }
+    </style>
+
+</head>
+
+<body>
+
+
+<div class="d-flex toggled" id="wrapper">
+    <div class="bg-light border-right d-none d-md-block" id="sidebar-wrapper">
+        <div class="sidebar-heading">PD Upstream Portal</div>
+        <div class="list-group list-group-flush">
+            <a class="list-group-item list-group-item-action bg-light" href="{{ url_for('home') }}">Record Experimental Data</a>
+            <a class="list-group-item list-group-item-action bg-light" href="{{ url_for('seed_stage_home') }}">Record Seed Stage Data</a>
+            <a class="list-group-item list-group-item-action bg-light" href="{{ url_for('online_bioreactor_data_upload') }}">Online Bioreactor Upload</a>
+            <a class="list-group-item list-group-item-action bg-light" href="{{ url_for('summary') }}">Experimental Data Summary</a>
+        </div>
+    </div>
+
+    <div id="page-content-wrapper">
+        <nav id="main-nav-bar" class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <button class="btn btn-primary" id="menu-toggle" style="background-color:#006fba;border-color:#006fba;box-shadow:none;">&#9776;</button>
+            <p>&nbsp;&nbsp;</p>
+            <ul class="nav nav-pills" id="pills-nav">
+                <li class="nav-item">
+                  <a data-toggle="tab" href="#" class="nav-link active" onclick="switch_to_cell_bank()">Cell Bank</a>
+                </li>
+                <li class="nav-item">
+                  <a data-toggle="tab" href="#" class="nav-link" onclick="switch_to_process_condition()">Seed Process Condition</a>
+                </li>
+                <li class="nav-item">
+                  <a data-toggle="tab" href="#" class="nav-link" onclick="switch_to_seed_growth_data()">Seed Growth Data</a>
+                </li>
+              </ul>
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#5e637a;margin-left:auto;margin-right:-1.5%">
+               Edit/Add Process Versions
+           </a>
+           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" style="color:#5e637a;" href="{{ url_for('batch_process_edit') }}">Edit Batch Process Version</a>
+            <a class="dropdown-item" style="color:#5e637a;" href="{{ url_for('batch_process_add') }}">Add Batch Process Version</a>
+            <a class="dropdown-item" style="color:#5e637a;" href="{{ url_for('addition_process_edit') }}">Edit Addition Process Version</a>
+            <a class="dropdown-item" style="color:#5e637a;" href="{{ url_for('addition_process_add') }}">Add Addition Process Version</a>
+            <a class="dropdown-item" style="color:#5e637a;" href="{{ url_for('condition_process_edit') }}">Edit Condition Process Version</a>
+            <a class="dropdown-item" style="color:#5e637a;" href="{{ url_for('condition_process_add') }}">Add Condition Process Version</a>
+           </div>
+        </nav>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/4.1.0/js/dataTables.fixedColumns.min.js"></script>
+    <script src="//rawgithub.com/indrimuska/jquery-editable-select/master/dist/jquery-editable-select.min.js"></script>
+<link href="//rawgithub.com/indrimuska/jquery-editable-select/master/dist/jquery-editable-select.min.css" rel="stylesheet">
+
+        <div class="container-fluid">
+            <div class="content">
+
+<div class="scrollwrapper" style="margin-left:0.5%">
+
+<br>
+
+<script>
+  // switches to "Cell Bank" tab
+  function switch_to_cell_bank() {
+    document.getElementById('bank-div').style.display = 'block';
+    document.getElementById('condition-div').style.display = 'none';
+    document.getElementById('growth-div').style.display = 'none';
+  }
+</script>
+
+<script>
+  // switches to "Seed Process Condition" tab
+  function switch_to_process_condition() {
+    document.getElementById('condition-div').style.display = 'block';
+    document.getElementById('bank-div').style.display = 'none';
+    document.getElementById('growth-div').style.display = 'none';
+  }
+</script>
+
+<script>
+  // switches to "Seed Growth Data" tab
+  function switch_to_seed_growth_data() {
+    document.getElementById('growth-div').style.display = 'block';
+    document.getElementById('bank-div').style.display = 'none';
+    document.getElementById('condition-div').style.display = 'none';
+  }
+</script>
+
+<div id="bank-div">
+
+    <h4>Cell Bank</h4>
+    <hr>
+
+    <form action="{{ url_for('seed_stage_submitted') }}" method="post" class="form" role="form">
+    <input id="csrf_token" name="csrf_token" type="hidden" value="Ijk2Y2Q2NTg1ZWEzMTU2NDVhMjJmMmQyM2M4MjVhYzQxMDE1Mjg2ZDAi.Ys9YlQ.tLi8tj8vkaAR2mKH4XswS4OTsVQ">
+    
+        <table id="my_table1">
+
+            <tr>
+                {% for i in range(num_trains) %}
+                <td>
+
+            <div class="form-group "><label class="control-label" for="seed_train_run_id">Seed Train Run ID</label>
+                
+                <input class="form-control" id="seed_train_run_id" name="seed_train_run_id" type="text" value="{{seed_train_run_id_lst[i]}}">
+            
+        </div>
+
+    </div>
+    {% endfor %}
+    </tr>
+
+    <tr>
+        {% for i in range(num_trains) %}
+        <td>
+        <div class="form-group "><label class="control-label" for="strain_number">Strain Number</label>
+            
+                <input class="form-control" id="strain_number" name="strain_number" type="text" value="">
+            
+        </div>
+
+    </div>
+    {% endfor %}
+    </tr>
+        
+
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+        <div class="form-group "><label class="control-label" for="cell_bank_type">Cell Bank Type</label>
+            
+                <input class="form-control" id="cell_bank_type" name="cell_bank_type" type="text" value="">
+            
+        </div>
+
+    </div>
+    {% endfor %}
+    </tr>
+        
+
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+        <div class="form-group "><label class="control-label" for="cell_bank_lot_number">Cell Bank Lot Number</label>
+            
+                <input class="form-control" id="cell_bank_lot_number" name="cell_bank_lot_number" type="text" value="">
+            
+        </div>
+
+    </div>
+    {% endfor %}
+    </tr>
+        
+
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+        <div class="form-group "><label class="control-label" for="cell_bank_vial_number">Cell Bank Vial Number</label>
+            
+                <input class="form-control" id="cell_bank_vial_number" name="cell_bank_vial_number" type="text" value="">
+            
+        </div>
+    </div>
+    {% endfor %}
+    </tr>
+
+        
+
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+        <div class="form-group "><label class="control-label" for="date_cell_bank_made">Date Cell Bank Made</label>
+            
+                <input class="form-control" id="date_cell_bank_made" name="date_cell_bank_made" type="date" value="">
+            
+        </div>
+
+    </div>
+    {% endfor %}
+    </tr>
+
+    </table>
+
+
+  <br>
+ 
+    <input type="submit" value="Push to Database" class="btn btn-primary" style="background-color:#006fba;border-color:#006fba">
+
+    <script>
+        // Assigns IDs to all form fields for Growth Data (format: "4-number")
+        let id = 0;
+        const cells = document.querySelectorAll('#bank-div input');
+        cells.forEach(function(el) {
+            if (el.type != 'submit') {
+                new_id = id++;
+                el.name = '4-' + new_id.toString();
+            }
+        });
+    </script>
+
+
+</div>
+
+<div id="condition-div" style="display:none">
+    <h4>Seed Process Condition</h4>
+    <hr>
+
+    <table id="my_table1">
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+        <div class="form-group "><label class="control-label" for="seed_train_run_id">Seed Train Run ID</label>
+                
+            <input class="form-control" id="seed_train_run_id" name="seed_train_run_id" type="text" value="{{seed_train_run_id_lst[i]}}">
+        
+        </div>
+
+    </div>
+    {% endfor %}
+    </tr>
+
+    <tr>
+        {% for i in range(num_trains) %}
+        <td>
+        <div class="form-group  required"><label class="control-label" for="process_version_name_used_as_template">Process Version Name (used as Template)</label>
+            
+              <select class="form-control" id="process_version_name_used_as_template" name="process_version_name_used_as_template">
+                
+                <option disabled selected value> -- select an option -- </option>
+                {% for i in range(condition_versions | length) %}
+                <option value="{{condition_versions[i]}}">{{condition_versions[i]}}</option>
+                {% endfor %}
+
+              </select>
+            
+        </div>
+        {% endfor %}
+        </tr>
+
+      <tr>
+        {% for i in range(num_trains) %}
+        <td>
+      <div class="form-group "><label class="control-label" for="autopop">Auto-populate fields for this run?</label>
+      
+        <select class="form-control" id="autopop" name="autopop"><option value="no">No</option><option value="yes">Yes</option></select>
+          
+    </div>
+    </td>
+    {% endfor %}
+    </tr>
+
+    <tr>
+      {% for i in range(num_trains) %}
+      <td>
+      <div class="form-group  required"><label class="control-label" for="process_version_name">Process Version Name (actual)</label>
+          
+            <select class="form-control" id="process_version_name" name="process_version_name">
+              
+              <option disabled selected value> -- select an option -- </option>
+              {% for i in range(condition_versions | length) %}
+              <option value="{{condition_versions[i]}}">{{condition_versions[i]}}</option>
+              {% endfor %}
+
+            </select>
+          
+      </div>
+      {% endfor %}
+      </tr>
+
+</table>
+
+<br>
+
+    {% for j in range(max_num_stages) %}
+
+    <h5>Seed Stage {{j+1}} Conditions</h5>
+
+    <table id="my_table1">
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+
+        <div class="form-group "><label class="control-label" for="seed_stage_run_id">Seed Stage Run ID</label>
+        
+            <input class="form-control" id="seed_stage_run_id" name="seed_stage_run_id" type="text" value="">
+        
+        </div>
+
+            
+
+
+    </div>
+    {% endfor %}
+    </tr>
+
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+        <div class="form-group "><label class="control-label" for="seed_stage">Seed Stage</label>
+        
+            <input class="form-control" id="seed_stage" name="seed_stage" type="text" value="">
+        
+        </div>
+
+
+
+    </div>
+    {% endfor %}
+    </tr>
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+        <div class="form-group "><label class="control-label" for="strain_number">Strain Number</label>
+        
+            <input class="form-control" id="strain_number" name="strain_number" type="text" value="">
+        
+        </div>
+
+
+    </div>
+    {% endfor %}
+    </tr>
+
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+        <div class="form-group "><label class="control-label" for="seed_stage_run_id_used_to_inoculate">Seed Stage Run ID Used to Inoculate</label>
+        
+            <input class="form-control" id="seed_stage_run_id_used_to_inoculate" name="seed_stage_run_id_used_to_inoculate" type="text" value="">
+        
+        </div>
+
+
+    </div>
+    {% endfor %}
+    </tr>
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+
+        <div class="form-group "><label class="control-label" for="media">Media</label>
+        
+            <input class="form-control" id="media" name="media" type="text" value="">
+        
+        </div>
+
+
+    </div>
+    {% endfor %}
+    </tr>
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+
+        <div class="form-group "><label class="control-label" for="media_lot_number">Media Lot Number</label>
+        
+            <input class="form-control" id="media_lot_number" name="media_lot_number" type="text" value="">
+        
+        </div>
+
+    </div>
+    {% endfor %}
+    </tr>
+
+
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+        <div class="form-group "><label class="control-label" for="temperature_c_setpoint">Temperature (°C) Setpoint</label>
+        
+            <input class="form-control" id="temperature_c_setpoint" name="temperature_c_setpoint" step="any" type="number" value="">
+        
+        </div>
+
+
+    </div>
+    {% endfor %}
+    </tr>
+
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+        <div class="form-group "><label class="control-label" for="agitation_setpoint_rpm">Agitation Setpoint (RPM)</label>
+        
+            <input class="form-control" id="agitation_setpoint_rpm" name="agitation_setpoint_rpm" step="any" type="number" value="">
+        
+        </div>
+
+    </div>
+    {% endfor %}
+    </tr>
+
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+
+        <div class="form-group "><label class="control-label" for="orbital_diameter_cm">Orbital Diameter (cm)</label>
+        
+            <input class="form-control" id="orbital_diameter_cm" name="orbital_diameter_cm" step="any" type="number" value="">
+        
+        </div>
+
+    </div>
+    {% endfor %}
+    </tr>
+
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+
+        <div class="form-group "><label class="control-label" for="do_percent_setpoint">DO% Setpoint</label>
+        
+            <input class="form-control" id="do_percent_setpoint" name="do_percent_setpoint" step="any" type="number" value="">
+        
+        </div>
+
+
+    </div>
+    {% endfor %}
+    </tr>
+
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+        <div class="form-group "><label class="control-label" for="vessel">Vessel</label>
+        
+            <input class="form-control" id="vessel" name="vessel" type="text" value="">
+        
+        </div>
+
+
+    </div>
+    {% endfor %}
+    </tr>
+
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+        <div class="form-group "><label class="control-label" for="vessel_size_ml">Vessel Size (mL)</label>
+        
+            <input class="form-control" id="vessel_size_ml" name="vessel_size_ml" step="any" type="number" value="">
+        
+        </div>
+
+    </div>
+    {% endfor %}
+    </tr>
+
+
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+        <div class="form-group "><label class="control-label" for="target_seeding_density_percent_vv">Target Seeding Density Percent (v/v)</label>
+        
+            <input class="form-control" id="target_seeding_density_percent_vv" name="target_seeding_density_percent_vv" step="any" type="number" value="">
+        
+        </div>
+
+    </div>
+    {% endfor %}
+    </tr>
+
+
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+        <div class="form-group "><label class="control-label" for="total_batch_volume_ml">Total Batch Volume (mL)</label>
+        
+            <input class="form-control" id="total_batch_volume_ml" name="total_batch_volume_ml" step="any" type="number" value="">
+        
+        </div>
+
+    </div>
+    {% endfor %}
+    </tr>
+
+
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+        <div class="form-group "><label class="control-label" for="amount_of_sf_media_to_add_ml">Amount of SF Media to Add (mL)</label>
+        
+            <input class="form-control" id="amount_of_sf_media_to_add_ml" name="amount_of_sf_media_to_add_ml" step="any" type="number" value="">
+        
+        </div>
+
+    </div>
+    {% endfor %}
+    </tr>
+
+
+        <tr>
+            {% for i in range(num_trains) %}
+            <td>
+
+
+        <div class="form-group "><label class="control-label" for="inoculum_size_to_add_ml">Inoculum Size to Add (mL)</label>
+        
+            <input class="form-control" id="inoculum_size_to_add_ml" name="inoculum_size_to_add_ml" step="any" type="number" value="">
+        
+        </div>
+
+    </div>
+    {% endfor %}
+    </tr>
+</table>
+<br>
+{% endfor %}
+
+      <input type="submit" value="Push to Database" class="btn btn-primary" style="background-color:#006fba;border-color:#006fba">
+    
+
+    <script>
+    // Assigns IDs to all form fields for Growth Data (format: "4-number")
+    let id1 = 1;
+    const run_names = document.querySelectorAll('#condition-div [id=seed_train_run_id]');
+    run_names.forEach(function(el) {
+        new_id = id1++;
+        el.name = "5-" + new_id.toString();
+    });
+    const process_version_name_used_as_templates = document.querySelectorAll('#condition-div [id=process_version_name_used_as_template]');
+    process_version_name_used_as_templates.forEach(function(el) {
+        new_id = id1++;
+        el.name = "5-" + new_id.toString();
+    });
+    const autopops = document.querySelectorAll('#condition-div [name=autopop]');
+    autopops.forEach(function(el) {
+        new_id = id1++;process_version_name_used_as_template
+        el.name = "5-" + new_id.toString();
+    });
+    const process_version_names = document.querySelectorAll('#condition-div [id=process_version_name]');
+    process_version_names.forEach(function(el) {
+        new_id = id1++;
+        el.name = "5-" + new_id.toString();
+    });
+    id1 = 4*Number('{{num_trains}}') + 1;
+    const cells1 = document.querySelectorAll('#condition-div input');
+    cells1.forEach(function(el) {
+        if (el.type != 'submit' && el.id !='seed_train_run_id') {
+            new_id = id1++;
+            el.name = '5-' + new_id.toString();
+        }
+    });
+    </script>
+
+
+<script>
+    // auto-fill based on process version
+      $('#condition-div select').on('change', function() {
+        let id_auto = Number(this.name.slice(2));
+        d = JSON.parse('{{rows | tojson}}');
+        num_trains = Number('{{num_trains}}');
+        max_stages = Number('{{max_num_stages}}')
+        if (id_auto > 2*num_trains && id_auto <= 3*num_trains) {
+            auto = this.value;
+            if (auto === 'yes') {
+                id_prot = id_auto - num_trains
+                prot = document.getElementsByName('5-' + id_prot)[0].value
+                for (let j = 0; j < d.length; j++) {
+                    var r = d[j];
+                    if (r.process_version_name_used_as_template === prot) {
+                        for (let k = 0; k < max_stages; k++) {
+                            let counter = 1;
+                            starting_index = id_auto + 2*num_trains + k*16*num_trains
+                            for (let i = starting_index; i <= (starting_index + num_trains*16); i += num_trains) {
+                                el = document.getElementsByName('5-' + i)[0]
+                                if (! el.readOnly) {
+                                    if (counter == 5) {
+                                        el.value = r.media
+                                    } else if (counter == 7) {
+                                        el.value = r.temperature_c_setpoint
+                                    } else if (counter == 8) {
+                                        el.value = r.agitation_setpoint_rpm
+                                    } else if (counter == 9) {
+                                        el.value = r.orbital_diameter_cm
+                                    } else if (counter == 10) {
+                                        el.value = r.do_percent_setpoint
+                                    } else if (counter == 13) {
+                                        el.value = r.target_seeding_density_percent_vv
+                                    } else if (counter == 1) {
+                                        el.value = r.seed_stage_run_id
+                                    } else if (counter == 2) {
+                                        el.value = r.seed_stage
+                                    }
+                                    counter++;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (let k = 0; k < max_stages; k++) {
+                    starting_index = id_auto + 2*num_trains + k*16*num_trains
+                    for (let i = starting_index; i <= (starting_index + num_trains*16); i += num_trains) {
+                        el = document.getElementsByName('5-' + i)[0]
+                        el.value = '';
+                    }
+                }
+            }
+        } else if (id_auto <= 2*num_trains) {
+            prot = document.getElementsByName('5-' + id_auto)[0].value;
+            id_auto += num_trains;
+            auto = document.getElementsByName("5-" + id_auto)[0].value;
+            if (auto === 'yes') {
+                for (let j = 0; j < d.length; j++) {
+                    var r = d[j];
+                    if (r.process_version_name_used_as_template === prot) {
+                        for (let k = 0; k < max_stages; k++) {
+                            let counter = 1;
+                            starting_index = id_auto + 2*num_trains + k*16*num_trains
+                            for (let i = starting_index; i <= (starting_index + num_trains*16); i += num_trains) {
+                                el = document.getElementsByName('5-' + i)[0]
+                                if (! el.readOnly) {
+                                    if (counter == 5) {
+                                        el.value = r.media
+                                    } else if (counter == 7) {
+                                        el.value = r.temperature_c_setpoint
+                                    } else if (counter == 8) {
+                                        el.value = r.agitation_setpoint_rpm
+                                    } else if (counter == 9) {
+                                        el.value = r.orbital_diameter_cm
+                                    } else if (counter == 10) {
+                                        el.value = r.do_percent_setpoint
+                                    } else if (counter == 13) {
+                                        el.value = r.target_seeding_density_percent_vv
+                                    } else if (counter == 1) {
+                                        el.value = r.seed_stage_run_id
+                                    } else if (counter == 2) {
+                                        el.value = r.seed_stage
+                                    }
+                                    counter++;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (let k = 0; k < max_stages; k++) {
+                    starting_index = id_auto + 2*num_trains + k*16*num_trains
+                    for (let i = starting_index; i <= (starting_index + num_trains*16); i += num_trains) {
+                        el = document.getElementsByName('5-' + i)[0]
+                        el.value = '';
+                    }
+                }
+            }
+        }
+      });
+</script>
+
+        
+
+
+</div>
+
+
+<div id="growth-div" style="display:none">
+
+    <h4>Seed Growth Data</h4>
+    <hr>
+
+    <style>
+        .sticky-col {
+          position: -webkit-sticky;
+          position: sticky;
+          background-color: white;
+      }
+  
+      .first-col {
+          width: 125px;
+          min-width: 125px;
+          max-width: 125px;
+          left: 0px;
+      }
+  
+      .second-col {
+          width: 125px;
+          min-width: 125px;
+          max-width: 125px;
+          left: 125px;
+      }
+  
+      .third-col {
+          width: 125px;
+          min-width: 125px;
+          max-width: 125px;
+          left: 250px;
+      }
+      </style>
+
+    {% for i in range(num_trains) %}
+    <h4>Seed Train {{i+1}} ({{seed_train_run_id_lst[i]}})</h4>
+
+    {% for j in range(num_stages_lst[i]) %}
+
+    <h5>Seed Stage {{j+1}}</h5>
+
+    {% for k in range(num_timepoints_list[i][j]) %}
+
+    <h6>Timepoint {{k+1}}</h6>
+
+    <table id="my_table3" style="table-layout:fixed;width:500%">
+        <tbody>
+    <tr>
+
+
+    <td class="sticky-col first-col">
+    <div class="form-group "><label class="control-label" for="seed_train_run_id">Seed Train Run ID</label>
+        
+            <input class="form-control" id="seed_train_run_id" name="seed_train_run_id" type="text" value="{{seed_train_run_id_lst[i]}}">
+        
+    </div>
+</td>
+
+    
+
+
+    <td class="sticky-col second-col">
+
+    <div class="form-group "><label class="control-label" for="seed_stage_run_id">Seed Stage Run ID</label>
+        
+            <input class="form-control" id="seed_stage_run_id" name="seed_stage_run_id" type="text" value="">
+        
+    </div>
+
+</td>
+    
+
+
+    <td class="sticky-col third-col">
+
+    <div class="form-group "><label class="control-label" for="ferm_sample_id">Ferm Sample ID</label>
+        
+            <input class="form-control" id="ferm_sample_id" name="ferm_sample_id" type="text" value="">
+        
+    </div>
+
+</td>
+    
+
+
+    <td>
+
+    <div class="form-group "><label class="control-label" for="seed_stage">Seed Stage</label>
+        
+            <input class="form-control" id="seed_stage" name="seed_stage" type="text" value="">
+        
+    </div>
+
+</td>
+    
+
+
+    <td>
+
+    <div class="form-group "><label class="control-label" for="description">Description</label>
+        
+            <input class="form-control" id="description" name="description" type="text" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="datetime">Datetime</label>
+        
+            <input class="form-control" id="datetime" name="datetime" type="datetime-local" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="take_in_or_out_of_incubator">Take In or Out of Incubator</label>
+        
+            <select class="form-control" id="take_in_or_out_of_incubator" name="take_in_or_out_of_incubator">
+                <option value=""></option>
+                <option value="in">In</option>
+                <option value="out">Out</option>
+            </select>
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="temperature_seed_stage_held_at_c">Temperature Seed Stage Held At (°C)</label>
+        
+            <input class="form-control" id="temperature_seed_stage_held_at_c" name="temperature_seed_stage_held_at_c" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="total_elapsed_time_h">Total Elapsed Time (h)</label>
+        
+            <input class="form-control" id="total_elapsed_time_h" name="total_elapsed_time_h" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+    <td>
+
+    <div class="form-group "><label class="control-label" for="true_eft_h">True EFT H</label>
+        
+            <input class="form-control" id="true_eft_h" name="true_eft_h" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="notes">Notes</label>
+        
+            <input class="form-control" id="notes" name="notes" type="text" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="ysi_glucose_gl">YSI Glucose (gl)</label>
+        
+            <input class="form-control" id="ysi_glucose_gl" name="ysi_glucose_gl" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="o2_flow_percent">O2 Flow Percent</label>
+        
+            <input class="form-control" id="o2_flow_percent" name="o2_flow_percent" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="total_gas_flow_slpm">Total Gas Flow SLPM</label>
+        
+            <input class="form-control" id="total_gas_flow_slpm" name="total_gas_flow_slpm" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="base_totalizer_ml">Base Totalizer (mL)</label>
+        
+            <input class="form-control" id="base_totalizer_ml" name="base_totalizer_ml" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="online_ph">Online pH</label>
+        
+            <input class="form-control" id="online_ph" name="online_ph" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="offline_ph">Offline pH</label>
+        
+            <input class="form-control" id="offline_ph" name="offline_ph" step="any" type="number" value="">
+        
+    </div>
+</td>
+
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="od595">OD 595</label>
+        
+            <input class="form-control" id="od595" name="od595" step="any" type="number" value="">
+        
+    </div>
+</td>
+
+    
+
+
+    <td>
+
+    <div class="form-group "><label class="control-label" for="specific_growth_rate_k_1">Specific Growth Rate K-1</label>
+        
+            <input class="form-control" id="specific_growth_rate_k_1" name="specific_growth_rate_k_1" step="any" type="number" value="">
+        
+    </div>
+
+
+</td>
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="od_bioht">OD BioHT</label>
+        
+            <input class="form-control" id="od_bioht" name="od_bioht" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="bioht_glucose_g_l">BioHT Glucose (g/L)</label>
+        
+            <input class="form-control" id="bioht_glucose_g_l" name="bioht_glucose_g_l" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="bioht_lactate_mmol">BioHT Lactate (mmol)</label>
+        
+            <input class="form-control" id="bioht_lactate_mmol" name="bioht_lactate_mmol" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="bioht_acetate_mmol">BioHT Acetate (mmol)</label>
+        
+            <input class="form-control" id="bioht_acetate_mmol" name="bioht_acetate_mmol" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="bioht_ammonia_mmol">BioHT Ammonia (mmol)</label>
+        
+            <input class="form-control" id="bioht_ammonia_mmol" name="bioht_ammonia_mmol" step="any" type="number" value="">
+        
+    </div>
+
+
+</td>
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="bioht_glutamine_mmol">BioHT Glutamine (mmol)</label>
+        
+            <input class="form-control" id="bioht_glutamine_mmol" name="bioht_glutamine_mmol" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="bioht_glutamate_mmol">BioHT Glutamate (mmol)</label>
+        
+            <input class="form-control" id="bioht_glutamate_mmol" name="bioht_glutamate_mmol" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="bioht_phosphate_mmol">BioHT Phosphate (mmol)</label>
+        
+            <input class="form-control" id="bioht_phosphate_mmol" name="bioht_phosphate_mmol" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="bioht_magnesium_mmol">BioHT Magnesium (mmol)</label>
+        
+            <input class="form-control" id="bioht_magnesium_mmol" name="bioht_magnesium_mmol" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="bioht_formate_mg_l">BioHT Formate (mg/L)</label>
+        
+            <input class="form-control" id="bioht_formate_mg_l" name="bioht_formate_mg_l" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="bioht_pyruvate_mmol">BioHT Pyruvate (mmol)</label>
+        
+            <input class="form-control" id="bioht_pyruvate_mmol" name="bioht_pyruvate_mmol" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="bioht_ldh_u_l">BioHT LDH (u/L)</label>
+        
+            <input class="form-control" id="bioht_ldh_u_l" name="bioht_ldh_u_l" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="bioht_igg_mg_l">BioHT IGG (mg/L)</label>
+        
+            <input class="form-control" id="bioht_igg_mg_l" name="bioht_igg_mg_l" step="any" type="number" value="">
+        
+    </div>
+
+</td>
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="bioht_total_protein_g_l">BioHT Total Protein (g/L)</label>
+        
+            <input class="form-control" id="bioht_total_protein_g_l" name="bioht_total_protein_g_l" step="any" type="number" value="">
+        
+    </div>
+</td>
+
+    
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="sodium">Sodium</label>
+        
+            <input class="form-control" id="sodium" name="sodium" step="any" type="number" value="">
+        
+    </div>
+
+
+</td>
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="potassium">Potassium</label>
+        
+            <input class="form-control" id="potassium" name="potassium" step="any" type="number" value="">
+        
+    </div>
+</td>
+
+
+
+    <td>
+    <div class="form-group "><label class="control-label" for="osm_mosm_kg">OSM MOSM (kg)</label>
+        
+            <input class="form-control" id="osm_mosm_kg" name="osm_mosm_kg" step="any" type="number" value="">
+        
+    </div>
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+<br>
+
+{% endfor %}
+
+{% endfor %}
+
+<hr>
+{% endfor %}
+
+
+
+        <input type="submit" value="Push to Database" class="btn btn-primary" style="background-color:#006fba;border-color:#006fba">
+
+
+<script>
+    // Assigns IDs to all form fields for Seed Growth Data (format: "6-number")
+    let id2 = 1;
+    const cells2 = document.querySelectorAll('#growth-div input');
+    cells2.forEach(function(el) {
+        if (el.type != 'submit') {
+            new_id = id2++;
+            el.name = '6-' + new_id.toString();
+        }
+    });
+    i = 0
+    const cells3 = document.querySelectorAll('#growth-div select');
+    cells3.forEach(function(el) {
+        el.name = '6-select' + i
+        i++;
+    });
+</script>
+
+
+
+</div>
+
+<p></p>
+
+
+ 
+    
+    
+     </div>
+
+    <!--This is just to store necessary data so we can retrieve it after the form is submitted-->
+    <div style='display:none'>
+    <div class="form-group "><label class="control-label" for="num_trains">Number of Trains</label>
+        
+        <input class="form-control" id="num_trains" name="num_trains" step="any" type="text" value="{{num_trains}}">
+        
+        </div>
+    {% for i in range(num_trains) %}
+    <div class="form-group ">
+    <input class="form-control" id="num_stages{{i}}" name="num_stages{{i}}" step="any" type="text" value="{{num_stages_lst[i]}}">
+    </div>    
+        {% for j in range(num_stages_lst[i]) %}
+        <div style='display:none'>
+        <input class="form-control" id="num_timepoints_{{i}}_{{j}}" name="num_timepoints_{{i}}_{{j}}" step="any" type="text" value="{{num_timepoints_list[i][j]}}">
+        </div>
+        {% endfor %}
+    {% endfor %}
+    <div style='display:none'>
+    <input class="form-control" id="max_num_stages" name="max_num_stages" step="any" type="text" value="{{max_num_stages}}">
+    </div>
+
+    <script>
+    // Greys out the fields if they shouldn't be filled in based on the number of stages provides (for Process Condition page)
+    num_trains = Number('{{num_trains}}')
+    max_stages = Number('{{max_num_stages}}')
+    for (let i = 0; i < num_trains; i++) {
+        num_stages = Number(document.getElementById(`num_stages${i}`).value)
+        starting_id = 4*num_trains + 1
+        for (let j = 0; j < max_stages; j++) {
+            if ((j+1) > num_stages) {
+                for (let k = 0; k < 16; k++) {
+                    curr_id = starting_id + j*16*num_trains + (i) + k*num_trains
+                    document.getElementsByName('5-' + curr_id)[0].readOnly = true
+                }
+            }
+        }
+    }
+    </script>
+
+
+</form> 
+    
+    
+<p></p>
+
+  </div>
+
+</div>
+</div>
+
+
+
+
+
+<script>
+    $("#menu-toggle").click(function (e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+</script>
+
+</body>
+
+</html>

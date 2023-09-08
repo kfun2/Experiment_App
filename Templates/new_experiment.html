@@ -1,0 +1,3353 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+
+<div class="scrollwrapper" style="margin-left:0.5%">
+
+<!--<button type="button">Click Me!</button> -->
+
+
+<script>
+  // switches to "Sutro Production Batch Record" tab
+  function switch_to_sutro() {
+    document.getElementById('experiment-div').style.display = 'block';
+    document.getElementById('addition-div').style.display = 'none';
+    document.getElementById('timepoint-div').style.display = 'none';
+  }
+</script>
+
+<!--<script>
+  // switches to "Upload file for ferm batch record" tab
+  function switch_to_uploadfile() {
+    document.getElementById('upload-div').style.display = 'block';
+    document.getElementById('experiment-div').style.display = 'none';
+    document.getElementById('addition-div').style.display = 'none';
+    document.getElementById('timepoint-div').style.display = 'none';
+  }
+</script> -->
+
+<script>
+  // switches to "Production Addition" tab
+  function switch_to_additions() {
+    document.getElementById('addition-div').style.display = 'block';
+    document.getElementById('experiment-div').style.display = 'none';
+     document.getElementById('timepoint-div').style.display = 'none';
+  }
+</script>
+
+<script>
+  // switches to "Growth Data" tab
+  function switch_to_timepoints() {
+    document.getElementById('timepoint-div').style.display = 'block';
+    document.getElementById('experiment-div').style.display = 'none';
+    document.getElementById('addition-div').style.display = 'none';
+  }
+</script>
+
+<div id="experiment-div">
+
+    <h4>Sutro Production Batch Record</h4>
+    <hr>
+
+    <form action="{{ url_for('experiment_submitted') }}" method="post" class="form" role="form">
+    <input id="csrf_token" name="csrf_token" type="hidden" value="Ijk2Y2Q2NTg1ZWEzMTU2NDVhMjJmMmQyM2M4MjVhYzQxMDE1Mjg2ZDAi.Ys9YlQ.tLi8tj8vkaAR2mKH4XswS4OTsVQ">
+    <div class="form-group  required"><label class="control-label" for="experiment_name">Experiment Name</label>
+    
+
+      <input class="form-control" id="experiment_name" name="experiment_name" type="text" value="">
+   
+      <hr>
+      <input onclick="all_prots()" type="button" value="Use First Process Version For All Runs" class="btn btn-primary btn-sm" style="background-color:#006fba;border-color:#006fba;box-shadow:none;"></button>
+      <input onclick="auto_pop_all()" type="button" value="Auto-populate For All Runs" class="btn btn-primary btn-sm" style="background-color:#006fba;border-color:#006fba;box-shadow:none;"></button>
+      <p></p>
+      <table id="my_table1">
+
+        <style>
+      .sticky-row {
+          position: -webkit-sticky;
+          position: sticky;
+          background-color: white;
+      }
+
+      .first-row {
+          height: 100px;
+          min-height: 100px;
+          max-height: 100px;
+          top: 0px;
+      }
+      .second-row {
+          height: 100px;
+          min-height: 100px;
+          max-height: 100px;
+          top: 100px;
+      }
+      .third-row {
+          height: 100px;
+          min-height: 100px;
+          max-height: 100px;
+          top:200px;
+      }
+        </style>
+
+
+
+        <tr>
+          {% for i in range(num_runs) %}
+          <td>
+          <div class="form-group  required"><label class="control-label" for="process_version_name_used_as_template">Process Version Name (used as Template)</label>
+              
+                <select onchange="change_additions_prelim()" class="form-control" id="process_version_name_used_as_template" name="process_version_name_used_as_template">
+                  
+                  <option disabled selected value> -- select an option -- </option>
+                  {% for i in range(versions | length) %}
+                  <option value="{{versions[i]}}">{{versions[i]}}</option>
+                  {% endfor %}
+
+                </select>
+              
+          </div>
+          {% endfor %}
+          </tr>
+
+        <tr>
+          {% for i in range(num_runs) %}
+          <td>
+        <div class="form-group "><label class="control-label" for="autopop">Auto-populate fields for this run?</label>
+        
+          <select class="form-control"><option value="no">No</option><option value="yes">Yes</option></select>
+            
+      </div>
+      </td>
+      {% endfor %}
+      </tr>
+
+      <tr>
+        {% for i in range(num_runs) %}
+        <td>
+        <div class="form-group  required"><label class="control-label" for="process_version_name">Process Version Name (actual)</label>
+            
+              <input list="my_lst" onchange="change_additions_prelim()" class="form-control" id="process_version_name" name="process_version_name">
+                
+              <datalist id="my_lst">
+                {% for i in range(versions | length) %}
+                <option value="{{versions[i]}}">{{versions[i]}}</option>
+                {% endfor %}
+              </datalist>
+
+        </input>
+            
+        </div>
+        {% endfor %}
+        </tr>
+
+
+        <tr>
+          {% for i in range(num_runs) %}
+          <td class="sticky-row first-row">
+    
+            
+            <div class="form-group "><label class="control-label" for="run_name">Run Name</label>
+        
+              <input onchange="change_additions_prelim()" class="form-control" id="run_name" name="run_name" type="text" value="">
+            
+      </div>
+            
+          </td>
+          {% endfor %}
+          </tr>
+
+  
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td class="sticky-row second-row">
+
+<div class="form-group "><label class="control-label" for="reactor_id">Reactor ID</label>
+      
+        <input onchange="change_additions_prelim()" class="form-control" id="reactor_id" name="reactor_id" type="text" value="">
+      
+</div>
+</td>
+{% endfor %}
+</tr>
+
+  
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td class="sticky-row third-row">
+
+<div class="form-group "><label class="control-label" for="run_description">Run Description</label>
+      
+        <input class="form-control" id="run_description" name="run_description" type="text" value="">
+      
+</div>
+
+</td>
+{% endfor %}
+</tr>
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="process_description">Process Description</label>
+      
+        <input class="form-control" id="process_description" name="process_description" type="text" value="">
+      
+</div>
+
+</td>
+{% endfor %}
+</tr>
+  
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+
+<div class="form-group "><label class="control-label" for="product">Product</label>
+      
+        <input class="form-control" id="product" name="product" type="text" value="">
+      
+</div>
+</td>
+{% endfor %}
+</tr>
+
+  
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+
+<div class="form-group "><label class="control-label" for="strain">Strain</label>
+      
+        <input class="form-control" id="strain" name="strain" type="text" value="">
+      
+</div>
+
+</td>
+{% endfor %}
+</tr>
+  
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+
+
+<div class="form-group "><label class="control-label" for="site_of_run">Site of Run</label>
+      
+        <input class="form-control" id="site_of_run" name="site_of_run" type="text" value="">
+      
+</div>
+
+</td>
+{% endfor %}
+</tr>
+  
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+
+<div class="form-group "><label class="control-label" for="scale_liter">Scale (L)</label>
+      
+        <input class="form-control" id="scale_liter" name="scale_liter" step="any" type="number" value="">
+      
+</div>
+
+
+  
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+<div class="form-group "><label class="control-label" for="number_of_seed_stages">Number of Seed Stages</label>
+      
+        <input class="form-control" id="number_of_seed_stages" name="number_of_seed_stages" step="any" type="number" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="seed_train_run_id">Seed Train Run ID</label>
+      
+        <input class="form-control" id="seed_train_run_id" name="seed_train_run_id" step="any" type="text" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="feed_medium_concentration">Feed Medium Concentration</label>
+      
+        <input class="form-control" id="feed_medium_concentration" name="feed_medium_concentration" type="text" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="batch_temperature_setpoint_celcius">Batch Temperature Setpoint (Celcius)</label>
+      
+        <input class="form-control" id="batch_temperature_setpoint_celcius" name="batch_temperature_setpoint_celcius" step="any" type="number" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="fed_batch_temperature_setpoint_celcius">Fed Batch Temperature Setpoint (Celcius)</label>
+      
+        <input class="form-control" id="fed_batch_temperature_setpoint_celcius" name="fed_batch_temperature_setpoint_celcius" step="any" type="number" value="">
+      
+</div>
+
+
+  
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+<div class="form-group "><label class="control-label" for="induction_temperature_setpoint_celcius">Induction Temperature Setpoint (Celcius)</label>
+      
+        <input class="form-control" id="induction_temperature_setpoint_celcius" name="induction_temperature_setpoint_celcius" step="any" type="number" value="">
+      
+</div>
+
+</td>
+{% endfor %}
+</tr>
+  
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="batch_phase_ph_setpoint">Batch Phase pH Setpoint</label>
+      
+        <input class="form-control" id="batch_phase_ph_setpoint" name="batch_phase_ph_setpoint" step="any" type="number" value="">
+      
+</div>
+
+
+  
+</td>
+{% endfor %}
+</tr>
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="fed_batch_ph_setpoint">Fed Batch pH Setpoint</label>
+      
+        <input class="form-control" id="fed_batch_ph_setpoint" name="fed_batch_ph_setpoint" step="any" type="number" value="">
+      
+</div>
+
+
+  
+</td>
+{% endfor %}
+</tr>
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="induction_ph_setpoint">Induction pH Setpoint</label>
+      
+        <input class="form-control" id="induction_ph_setpoint" name="induction_ph_setpoint" step="any" type="number" value="">
+      
+</div>
+
+
+  
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="batch_phase_do_setpoint">Batch Phase Do Setpoint</label>
+      
+        <input class="form-control" id="batch_phase_do_setpoint" name="batch_phase_do_setpoint" step="any" type="number" value="">
+      
+</div>
+
+</td>
+{% endfor %}
+</tr>
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="fed_batch_do_setpoint">Fed Batch Do Setpoint</label>
+      
+        <input class="form-control" id="fed_batch_do_setpoint" name="fed_batch_do_setpoint" step="any" type="number" value="">
+      
+</div>
+
+</td>
+{% endfor %}
+</tr>
+  
+  
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="induction_do_setpoint">Induction Do Setpoint</label>
+      
+        <input class="form-control" id="induction_do_setpoint" name="induction_do_setpoint" step="any" type="number" value="">
+      
+</div>
+
+</td>
+{% endfor %}
+</tr>
+
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="target_batch_phase_airflow_vvm">Target Batch Phase Airflow (VVM)</label>
+      
+        <input class="form-control" id="target_batch_phase_airflow_vvm" name="target_batch_phase_airflow_vvm" step="any" type="number" value="">
+      
+</div>
+
+
+  
+</td>
+{% endfor %}
+</tr>
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="target_fed_batch_phase_airflow_vvm">Target Fed Batch Phase Airflow (VVM)</label>
+      
+        <input class="form-control" id="target_fed_batch_phase_airflow_vvm" name="target_fed_batch_phase_airflow_vvm" step="any" type="number" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="foam_control">Foam Control</label>
+      
+        <input class="form-control" id="foam_control" name="foam_control" type="text" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+<div class="form-group "><label class="control-label" for="inducer">Inducer</label>
+      
+        <input class="form-control" id="inducer" name="inducer" type="text" value="">
+      
+</div>
+
+
+  
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+<div class="form-group "><label class="control-label" for="target_batch_volume_ml">Target Batch Volume (mL)</label>
+      
+        <input class="form-control" id="target_batch_volume_ml" name="target_batch_volume_ml" step="any" type="number" value="">
+      
+</div>
+
+
+  
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+<div class="form-group "><label class="control-label" for="target_pre_induction_volume_ml">Target Pre-Induction Volume (mL)</label>
+      
+        <input class="form-control" id="target_pre_induction_volume_ml" name="target_pre_induction_volume_ml" step="any" type="number" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr> 
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="target_final_volume_ml">Target Final Volume (mL)</label>
+      
+        <input class="form-control" id="target_final_volume_ml" name="target_final_volume_ml" step="any" type="number" value="">
+      
+</div>
+
+</td>
+{% endfor %}
+</tr>
+  
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="target_final_volume_w_drawdown_ml">Target Final Volume w/ Drawdown (mL)</label>
+      
+        <input class="form-control" id="target_final_volume_w_drawdown_ml" name="target_final_volume_w_drawdown_ml" step="any" type="number" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>  
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="seed_media">Seed Media</label>
+      
+        <input class="form-control" id="seed_media" name="seed_media" type="text" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="feed_media_1">Feed Media 1</label>
+      
+        <input class="form-control" id="feed_media_1" name="feed_media_1" type="text" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="feed_media_1_density">Feed Media 1 Density (g/L)</label>
+      
+        <input onchange="calculate_fields()" class="form-control" id="feed_media_1_density" name="feed_media_1_density" type="number" step="any" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="target_time_to_add_feed_media_1_post_feed_start_h">Target Time to Add Feed Media 1 Post Feed Start H</label>
+      
+        <input class="form-control" id="target_time_to_add_feed_media_1_post_feed_start_h" name="target_time_to_add_feed_media_1_post_feed_start_h" type="text" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="feed_media_2">Feed Media 2</label>
+      
+        <input class="form-control" id="feed_media_2" name="feed_media_2" type="text" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="target_time_to_add_feed_media_2_post_feed_start_h">Target Time to Add Feed Media 2 Post Feed Start H</label>
+      
+        <input class="form-control" id="target_time_to_add_feed_media_2_post_feed_start_h" name="target_time_to_add_feed_media_2_post_feed_start_h" step="any" type="number" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="estimated_batch_timing_h">Estimated Batch Timing H</label>
+      
+        <input class="form-control" id="estimated_batch_timing_h" name="estimated_batch_timing_h" step="any" type="number" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="target_post_feed_duration_until_temp_shift_h">Target Post Feed Duration Until Temp Shift H</label>
+      
+        <input class="form-control" id="target_post_feed_duration_until_temp_shift_h" name="target_post_feed_duration_until_temp_shift_h" step="any" type="number" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+<div class="form-group "><label class="control-label" for="target_post_feed_duration_until_induction_h">Target Post Feed Duration Until Induction H</label>
+      
+        <input class="form-control" id="target_post_feed_duration_until_induction_h" name="target_post_feed_duration_until_induction_h" step="any" type="number" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+<div class="form-group "><label class="control-label" for="target_induction_duration_h">Target Induction Duration H</label>
+      
+        <input class="form-control" id="target_induction_duration_h" name="target_induction_duration_h" step="any" type="number" value="">
+      
+</div>
+
+</td>
+{% endfor %}
+</tr>
+  
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="growth_feed_rate_1_m_h_1">Growth Feed Rate 1 h-1</label>
+      
+        <input class="form-control" id="growth_feed_rate_1_m_h_1" name="growth_feed_rate_1_m_h_1" step="any" type="number" value="">
+      
+</div>
+
+
+  
+</td>
+{% endfor %}
+</tr>
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="growth_feed_rate_1_post_feed_target_time_h">Growth Feed Rate 1 Post Feed Target Time H</label>
+      
+        <input class="form-control" id="growth_feed_rate_1_post_feed_target_time_h" name="growth_feed_rate_1_post_feed_target_time_h" step="any" type="number" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="growth_feed_rate_1_type">Growth Feed Rate 1 Type</label>
+      
+        <input class="form-control" id="growth_feed_rate_1_type" name="growth_feed_rate_1_type" type="text" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="growth_feed_rate_2_m_h_1">Growth Feed Rate 2 h-1</label>
+      
+        <input class="form-control" id="growth_feed_rate_2_m_h_1" name="growth_feed_rate_2_m_h_1" type="text" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="growth_feed_rate_2_post_feed_target_time_h">Growth Feed Rate 2 Post Feed Target Time H</label>
+      
+        <input class="form-control" id="growth_feed_rate_2_post_feed_target_time_h" name="growth_feed_rate_2_post_feed_target_time_h" type="text" value="">
+      
+</div>
+
+</td>
+{% endfor %}
+</tr>
+  
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="growth_feed_rate_2_type">Growth Feed Rate 2 Type</label>
+      
+        <input class="form-control" id="growth_feed_rate_2_type" name="growth_feed_rate_2_type" type="text" value="">
+      
+</div>
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="induction_feed_rate_m_h_1">Induction Feed Rate M H 1</label>
+      
+        <input class="form-control" id="induction_feed_rate_m_h_1" name="induction_feed_rate_m_h_1" step="any" type="number" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+<div class="form-group "><label class="control-label" for="induction_feed_profile_type">Induction Feed Profile Type</label>
+      
+        <input class="form-control" id="induction_feed_profile_type" name="induction_feed_profile_type" step="any" type="text" value="">
+      
+</div>
+
+
+  
+</td>
+{% endfor %}
+</tr>
+
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+<div class="form-group "><label class="control-label" for="induction_feed_profile_type">Induction Phase Feed Interval H</label>
+      
+        <input class="form-control" id="induction_feed_profile_type" name="induction_feed_profile_type" type="number" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="post_feed_time_of_percent_drawdown_h">Post Feed Time of Percent Drawdown H</label>
+      
+        <input class="form-control" id="post_feed_time_of_percent_drawdown_h" name="post_feed_time_of_percent_drawdown_h" step="any" type="number" value="">
+      
+</div>
+
+
+  
+</td>
+{% endfor %}
+</tr>
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="drawdown_at_post_feed_time_percent">Drawdown at Post Feed Time (Percent)</label>
+      
+        <input class="form-control" id="drawdown_at_post_feed_time_percent" name="drawdown_at_post_feed_time_percent" step="any" type="number" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="initial_batch_vol_litter">Initial Batch Vol (L)</label>
+      
+        <input class="form-control" id="initial_batch_vol_litter" name="initial_batch_vol_litter" step="any" type="number" value="">
+      
+</div>
+
+
+  
+</td>
+{% endfor %}
+</tr>
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="x0_grams_over_litter">X0 Grams Over Litter</label>
+      
+        <input class="form-control" id="x0_grams_over_litter" name="x0_grams_over_litter" step="any" type="number" value="">
+      
+</div>
+
+</td>
+{% endfor %}
+</tr>
+  
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+
+<div class="form-group "><label class="control-label" for="sf_feed_gluc_grams_over_litter">Sf (primary carbon source feed conc) (g/L)</label>
+      
+        <input class="form-control" id="sf_feed_gluc_grams_over_litter" name="sf_feed_gluc_grams_over_litter" step="any" type="number" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+<div class="form-group "><label class="control-label" for="s0_batch_gluc_grams_over_litter">S0 (primary carbon source batch conc) (g/L)</label>
+      
+        <input class="form-control" id="s0_batch_gluc_grams_over_litter" name="s0_batch_gluc_grams_over_litter" step="any" type="number" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="yx_over_s_grams_over_grams">Yx/s (g/g)</label>
+      
+        <input class="form-control" id="yx_over_s_grams_over_grams" name="yx_over_s_grams_over_grams" step="any" type="number" value="">
+      
+</div>
+
+
+  
+</td>
+{% endfor %}
+</tr>
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="od_over_gram_dry_wt_over_litter">OD/g dry wt/L</label>
+      
+        <input class="form-control" id="od_over_gram_dry_wt_over_litter" name="od_over_gram_dry_wt_over_litter" step="any" type="number" value="">
+      
+</div>
+
+</td>
+{% endfor %}
+</tr>
+  
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="growth_phase_feed_interval_h">Growth Phase Feed Interval H</label>
+      
+        <input class="form-control" id="growth_phase_feed_interval_h" name="growth_phase_feed_interval_h" step="any" type="number" value="">
+      
+</div>
+
+
+  
+
+</td>
+{% endfor %}
+</tr>
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+<div class="form-group "><label class="control-label" for="feed_profile_type">Feed Profile Type</label>
+      
+        <input class="form-control" id="feed_profile_type" name="feed_profile_type" type="text" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+
+
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+<div class="form-group "><label class="control-label" for="actual_inoculation_time">Actual Inoculation Time</label>
+      
+        <input onchange="calculate_fields()" class="form-control" id="actual_inoculation_time" name="actual_inoculation_time" type="datetime-local" value="">
+      
+</div>
+
+
+  
+</td>
+{% endfor %}
+</tr>
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+<div class="form-group "><label class="control-label" for="actual_fed_batch_start_time">Actual Fed Batch Start Time</label>
+      
+        <input onchange="calculate_fields()" class="form-control" id="actual_fed_batch_start_time" name="actual_fed_batch_start_time" type="datetime-local" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr> 
+
+
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+<div class="form-group "><label class="control-label" for="actual_induction_start_time">Actual Induction Start Time</label>
+      
+        <input onchange="calculate_fields()" class="form-control" id="actual_induction_start_time" name="actual_induction_start_time" type="datetime-local" value="">
+      
+</div>
+
+
+</td>
+{% endfor %}
+</tr>
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="target_induction_duration_1_h">Target Induction Duration 1 H</label>
+        
+  <input class="form-control" id="target_induction_duration_1_h" name="target_induction_duration_1_h" step="any" type="number" value="">
+
+</div>
+
+</td>
+{% endfor %}
+</tr>
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="addtion_on_scale_pump_1">Addition on Scale/Pump 1</label>
+      
+        <input class="form-control" id="addtion_on_scale_pump_1" name="addtion_on_scale_pump_1" type="text" value="">
+      
+</div>
+    
+</td>
+{% endfor %}
+</tr>
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="addtion_on_scale_pump_2">Addition on Scale/Pump 2</label>
+      
+        <input class="form-control" id="addtion_on_scale_pump_2" name="addtion_on_scale_pump_2" type="text" value="">
+      
+</div>
+    
+</td>
+{% endfor %}
+</tr>
+
+<tr>
+  {% for i in range(num_runs) %}
+  <td>
+
+<div class="form-group "><label class="control-label" for="run_outcome">Run Outcome</label>
+      
+        <input class="form-control" id="run_outcome" name="run_outcome" type="text" value="">
+      
+</div>
+    
+</td>
+{% endfor %}
+</tr>
+
+
+  </table>
+  <br>
+ 
+    <input type="submit" value="Push to Database" class="btn btn-primary" style="background-color:#006fba;border-color:#006fba">
+  <br>
+
+  <script>
+    // Assigns IDs to all form fields for Sutro Production Batch Record (format: "1-number")
+    let ID = 1;
+    const c = document.querySelectorAll("#experiment-div select")
+    c.forEach(function(el) {
+      new_id = ID++;
+      el.id = '1-' + new_id.toString();
+      el.name = '1-' + new_id.toString();
+    });
+    var rowCount = $("#my_table1 tr").length;
+    var colCount = document.getElementById('my_table1').rows[0].cells.length;
+    let id = ID;
+    let input_counter = 1;
+    const cells = document.querySelectorAll('#experiment-div input');
+    cells.forEach(function(el) {
+      if (input_counter != 1 && input_counter != 2 && input_counter != 3 && input_counter != 4 && el.value != 'Push to Database') {
+          new_id = id++;
+          el.id = "1-" + new_id.toString();
+          el.name = "1-" + new_id.toString();
+      }
+      input_counter++;
+    });
+  </script>
+
+
+<script>
+  // auto-fill based on process version
+    $('#experiment-div select').on('change', function() {
+      let id_auto = Number(this.id.slice(2));
+      d = JSON.parse('{{rows | tojson}}');
+      var rowCount = $("#my_table1 tr").length;
+      var colCount = document.getElementById('my_table1').rows[0].cells.length;
+      if (id_auto > colCount && id_auto <= colCount*2) { // if the select field changed is the yes/no field
+        auto = this.value;
+        if (auto == 'yes') {
+          prot = document.getElementById("1-" + (id_auto-colCount).toString());
+          for (let j = 0; j < d.length; j++) {
+              var r = d[j];
+              if (r.process_version_name_used_as_template === prot.value) {
+                let counter = 1;
+                for (let i = (id_auto + 2*colCount); i <= (rowCount+1)*colCount; i += colCount) {
+                  el = document.getElementById("1-" + i.toString());
+                  if (counter == 1) {
+                    el.value = r.run_name;
+                  } else if (counter == 2) {
+                    el.value = r.reactor_id;
+                  } else if (counter == 3) {
+                    el.value = r.run_description;
+                  } else if (counter == 4) {
+                    el.value = r.process_description;
+                  } else if (counter == 5) {
+                    el.value = r.product;
+                  } else if (counter == 6) {
+                    el.value = r.strain;
+                  } else if (counter == 7) {
+                    el.value = r.site_of_run;
+                  } else if (counter == 8) {
+                    el.value = r.scale_liter;
+                  } else if (counter == 9) {
+                    el.value = r.number_of_seed_stages;
+                  } else if (counter == 10) {
+                    el.value = r.seed_train_run_id;
+                  } else if (counter == 11) {
+                    el.value = r.feed_medium_concentration;
+                  } else if (counter == 12) {
+                    el.value = r.batch_temperature_setpoint_celcius;
+                  } else if (counter == 13) {
+                    el.value = r.fed_batch_temperature_setpoint_celcius;
+                  } else if (counter == 14) {
+                    el.value = r.induction_temperature_setpoint_celcius;
+                  } else if (counter == 15) {
+                    el.value = r.batch_phase_ph_setpoint;
+                  } else if (counter == 16) {
+                    el.value = r.fed_batch_ph_setpoint;
+                  } else if (counter == 17) {
+                    el.value = r.induction_ph_setpoint;
+                  } else if (counter == 18) {
+                    el.value = r.batch_phase_do_setpoint;
+                  } else if (counter == 19) {
+                    el.value = r.fed_batch_do_setpoint;
+                  } else if (counter == 20) {
+                    el.value = r.induction_do_setpoint;
+                  } else if (counter == 21) {
+                    el.value = r.target_batch_phase_airflow_vvm;
+                  } else if (counter == 22) {
+                    el.value = r.target_fed_batch_phase_airflow_vvm;
+                  } else if (counter == 23) {
+                    el.value = r.foam_control;
+                  } else if (counter == 24) {
+                    el.value = r.inducer;
+                  } else if (counter == 25) {
+                    el.value = r.target_batch_volume_ml;
+                  } else if (counter == 26) {
+                    el.value = r.target_pre_induction_volume_ml;
+                  } else if (counter == 27) {
+                    el.value = r.target_final_volume_ml;
+                  } else if (counter == 28) {
+                    el.value = r.target_final_volume_w_drawdown_ml;
+                  } else if (counter == 29) {
+                    el.value = r.seed_media;
+                  } else if (counter == 30) {
+                    el.value = r.feed_media_1;
+                  } else if (counter == 31) {
+                    el.value = r.feed_media_1_density;
+                  } else if (counter == 32) {
+                    el.value = r.target_time_to_add_feed_media_1_post_feed_start_h;
+                  } else if (counter == 33) {
+                    el.value = r.feed_media_2;
+                  } else if (counter == 34) {
+                    el.value = r.target_time_to_add_feed_media_2_post_feed_start_h;
+                  } else if (counter == 35) {
+                    el.value = r.estimated_batch_timing_h;
+                  } else if (counter == 36) {
+                    el.value = r.target_post_feed_duration_until_temp_shift_h;
+                  } else if (counter == 37) {
+                    el.value = r.target_post_feed_duration_until_induction_h;
+                  } else if (counter == 38) {
+                    el.value = r.target_induction_duration_h;
+                  } else if (counter == 39) {
+                    el.value = r.growth_feed_rate_1_m_h_1;
+                  } else if (counter == 40) {
+                    el.value = r.growth_feed_rate_1_post_feed_target_time_h;
+                  } else if (counter == 41) {
+                    el.value = r.growth_feed_rate_1_type;
+                  } else if (counter == 42) {
+                    el.value = r.growth_feed_rate_2_m_h_1;
+                  } else if (counter == 43) {
+                    el.value = r.growth_feed_rate_2_post_feed_target_time_h;
+                  } else if (counter == 44) {
+                    el.value = r.growth_feed_rate_2_type;
+                  } else if (counter == 45) {
+                    el.value = r.induction_feed_rate_m_h_1;
+                  } else if (counter == 46) {
+                    el.value = r.induction_feed_profile_type;
+                  } else if (counter == 47) {
+                    el.value = r.induction_phase_feed_interval_h;
+                  } else if (counter == 48) {
+                    el.value = r.post_feed_time_of_percent_drawdown_h;
+                  } else if (counter == 49) {
+                    el.value = r.drawdown_at_post_feed_time_percent;
+                  } else if (counter == 50) {
+                    el.value = r.initial_batch_vol_litter;
+                  } else if (counter == 51) {
+                    el.value = r.x0_grams_over_litter;
+                  } else if (counter == 52) {
+                    el.value = r.sf_feed_gluc_grams_over_litter;
+                  } else if (counter == 53) {
+                    el.value = r.s0_batch_gluc_grams_over_litter;
+                  } else if (counter == 54) {
+                    el.value = r.yx_over_s_grams_over_grams;
+                  } else if (counter == 55) {
+                    el.value = r.od_over_gram_dry_wt_over_litter;
+                  } else if (counter == 56) {
+                    el.value = r.growth_phase_feed_interval_h;
+                  } else if (counter == 57) {
+                    el.value = r.feed_profile_type;
+                  } else if (counter == 58) {
+                    var d = new Date(r.actual_inoculation_time);
+                    el.value = d.toISOString().slice(0,16);
+                  } else if (counter == 59) {
+                    var d = new Date(r.actual_fed_batch_start_time);
+                    el.value = d.toISOString().slice(0,16);
+                  } else if (counter == 60) {
+                    var d = new Date(r.actual_induction_start_time);
+                    el.value = d.toISOString().slice(0,16);
+                  } else if (counter == 61) {
+                    el.value = r.target_induction_duration_1_h;
+                  } else if (counter == 62) {
+                    el.value = r.addition_on_scale_pump_1;
+                  } else if (counter == 63) {
+                    el.value = r.addition_on_scale_pump_2;
+                  } else if (counter == 64) {
+                    el.value = r.run_outcome;
+                  }
+                  counter++;
+                }
+            }
+          }
+        } else {
+          for (let i = (id_auto + 2*colCount); i <= (rowCount+1)*colCount; i += colCount) {
+              id = "1-" + i.toString();
+              document.getElementById(id).value = "";
+          }
+        }
+      } else if (Number(this.id.slice(2)) <= colCount) { // if the select field changes is the process version field
+        id_auto = Number(this.id.slice(2)) + colCount;
+        auto = document.getElementById("1-" + id_auto).value;
+        if (auto == 'yes') {
+          prot = document.getElementById("1-" + (id_auto-colCount).toString());
+          for (let j = 0; j < d.length; j++) {
+              var r = d[j];
+              if (r.process_version_name_used_as_template === prot.value) {
+                let counter = 1;
+                for (let i = (id_auto + 2*colCount); i <= (rowCount+1)*colCount; i += colCount) {
+                  el = document.getElementById("1-" + i.toString());
+                  if (counter == 1) {
+                    el.value = r.run_name;
+                  } else if (counter == 2) {
+                    el.value = r.reactor_id;
+                  } else if (counter == 3) {
+                    el.value = r.run_description;
+                  } else if (counter == 4) {
+                    el.value = r.process_description;
+                  } else if (counter == 5) {
+                    el.value = r.product;
+                  } else if (counter == 6) {
+                    el.value = r.strain;
+                  } else if (counter == 7) {
+                    el.value = r.site_of_run;
+                  } else if (counter == 8) {
+                    el.value = r.scale_liter;
+                  } else if (counter == 9) {
+                    el.value = r.number_of_seed_stages;
+                  } else if (counter == 10) {
+                    el.value = r.seed_train_run_id;
+                  } else if (counter == 11) {
+                    el.value = r.feed_medium_concentration;
+                  } else if (counter == 12) {
+                    el.value = r.batch_temperature_setpoint_celcius;
+                  } else if (counter == 13) {
+                    el.value = r.fed_batch_temperature_setpoint_celcius;
+                  } else if (counter == 14) {
+                    el.value = r.induction_temperature_setpoint_celcius;
+                  } else if (counter == 15) {
+                    el.value = r.batch_phase_ph_setpoint;
+                  } else if (counter == 16) {
+                    el.value = r.fed_batch_ph_setpoint;
+                  } else if (counter == 17) {
+                    el.value = r.induction_ph_setpoint;
+                  } else if (counter == 18) {
+                    el.value = r.batch_phase_do_setpoint;
+                  } else if (counter == 19) {
+                    el.value = r.fed_batch_do_setpoint;
+                  } else if (counter == 20) {
+                    el.value = r.induction_do_setpoint;
+                  } else if (counter == 21) {
+                    el.value = r.target_batch_phase_airflow_vvm;
+                  } else if (counter == 22) {
+                    el.value = r.target_fed_batch_phase_airflow_vvm;
+                  } else if (counter == 23) {
+                    el.value = r.foam_control;
+                  } else if (counter == 24) {
+                    el.value = r.inducer;
+                  } else if (counter == 25) {
+                    el.value = r.target_batch_volume_ml;
+                  } else if (counter == 26) {
+                    el.value = r.target_pre_induction_volume_ml;
+                  } else if (counter == 27) {
+                    el.value = r.target_final_volume_ml;
+                  } else if (counter == 28) {
+                    el.value = r.target_final_volume_w_drawdown_ml;
+                  } else if (counter == 29) {
+                    el.value = r.seed_media;
+                  } else if (counter == 30) {
+                    el.value = r.feed_media_1;
+                  } else if (counter == 31) {
+                    el.value = r.feed_media_1_density;
+                  } else if (counter == 32) {
+                    el.value = r.target_time_to_add_feed_media_1_post_feed_start_h;
+                  } else if (counter == 33) {
+                    el.value = r.feed_media_2;
+                  } else if (counter == 34) {
+                    el.value = r.target_time_to_add_feed_media_2_post_feed_start_h;
+                  } else if (counter == 35) {
+                    el.value = r.estimated_batch_timing_h;
+                  } else if (counter == 36) {
+                    el.value = r.target_post_feed_duration_until_temp_shift_h;
+                  } else if (counter == 37) {
+                    el.value = r.target_post_feed_duration_until_induction_h;
+                  } else if (counter == 38) {
+                    el.value = r.target_induction_duration_h;
+                  } else if (counter == 39) {
+                    el.value = r.growth_feed_rate_1_m_h_1;
+                  } else if (counter == 40) {
+                    el.value = r.growth_feed_rate_1_post_feed_target_time_h;
+                  } else if (counter == 41) {
+                    el.value = r.growth_feed_rate_1_type;
+                  } else if (counter == 42) {
+                    el.value = r.growth_feed_rate_2_m_h_1;
+                  } else if (counter == 43) {
+                    el.value = r.growth_feed_rate_2_post_feed_target_time_h;
+                  } else if (counter == 44) {
+                    el.value = r.growth_feed_rate_2_type;
+                  } else if (counter == 45) {
+                    el.value = r.induction_feed_rate_m_h_1;
+                  } else if (counter == 46) {
+                    el.value = r.induction_feed_profile_type;
+                  } else if (counter == 47) {
+                    el.value = r.induction_phase_feed_interval_h;
+                  } else if (counter == 48) {
+                    el.value = r.post_feed_time_of_percent_drawdown_h;
+                  } else if (counter == 49) {
+                    el.value = r.drawdown_at_post_feed_time_percent;
+                  } else if (counter == 50) {
+                    el.value = r.initial_batch_vol_litter;
+                  } else if (counter == 51) {
+                    el.value = r.x0_grams_over_litter;
+                  } else if (counter == 52) {
+                    el.value = r.sf_feed_gluc_grams_over_litter;
+                  } else if (counter == 53) {
+                    el.value = r.s0_batch_gluc_grams_over_litter;
+                  } else if (counter == 54) {
+                    el.value = r.yx_over_s_grams_over_grams;
+                  } else if (counter == 55) {
+                    el.value = r.od_over_gram_dry_wt_over_litter;
+                  } else if (counter == 56) {
+                    el.value = r.growth_phase_feed_interval_h;
+                  } else if (counter == 57) {
+                    el.value = r.feed_profile_type;
+                  } else if (counter == 58) {
+                    var d = new Date(r.actual_inoculation_time);
+                    el.value = d.toISOString().slice(0,16);
+                  } else if (counter == 59) {
+                    var d = new Date(r.actual_fed_batch_start_time);
+                    el.value = d.toISOString().slice(0,16);
+                  } else if (counter == 60) {
+                    var d = new Date(r.actual_induction_start_time);
+                    el.value = d.toISOString().slice(0,16);
+                  } else if (counter == 61) {
+                    el.value = r.target_induction_duration_1_h;
+                  } else if (counter == 62) {
+                    el.value = r.addition_on_scale_pump_1;
+                  } else if (counter == 63) {
+                    el.value = r.addition_on_scale_pump_2;
+                  } else if (counter == 64) {
+                    el.value = r.run_outcome;
+                  }
+                  counter++;
+                }
+            }
+          }
+        } else {
+          for (let i = (id_auto + colCount); i <= (rowCount+1)*colCount; i += colCount) {
+              id = "1-" + i.toString();
+              document.getElementById(id).value = "";
+          }
+        }
+      }
+    });
+  </script>
+
+  <script>
+    // controls button that assigns the process version of the first run to all of the other runs
+    function all_prots() {
+      var colCount = document.getElementById('my_table1').rows[0].cells.length;
+      var prot = document.getElementById('1-1').value;
+      for (let i = 2; i <= colCount; i++) {
+        $("#1-" + i).val(prot).trigger('change');
+      }
+    }
+  </script>
+
+  <script>
+    // controls the button that selects "yes" for all of the auto-populate? fields
+    function auto_pop_all() {
+      var colCount = document.getElementById('my_table1').rows[0].cells.length;
+      for (let i = colCount+1; i <= 2*colCount; i++) {
+        $("#1-" + i).val("yes").trigger('change');
+      }
+    }
+  </script>
+
+</div>
+
+</div>
+
+<!--<div id = "upload-div" style = "display:none">
+    <h4>Upload Ferm Batch Record File</h4>
+    <hr>
+    <br><label>Upload Bioreactor Data File (.xls or .xlsx):</label><br>
+    <form action = "{{ url_for('experiment_submitted') }}" method = "POST" enctype = "multipart/form-data"> 
+    <input type="file" id="file" name="file_br" accept=".xls, .xlsx" required></input><p></p>`
+    </form> 
+    <hr>
+    <input type="submit" value="Push to Database" class="btn btn-primary" style="background-color:#006fba;border-color:#006fba">
+</div> -->
+
+<div id="addition-div" style="display:none">
+    <h4>Production Addition</h4>
+    <hr>
+    <div>
+      <h6 style="font-size:18px">Select Phases</h6>
+      <table id="my_table2" style="text-align:center">
+      
+      <tr>
+
+
+      {% for w in range(num_phases) %}
+      <td width="16.66666%">
+      <div  class="form-group "><label class="control-label" for="{{phase_lst[w]}}_box">{{phase_lst[w]}}</label>
+            
+          <input onchange="show_phase(this.id,this.name)" class="form-control" style="box-shadow:none;" id="{{w}}_phase" name="{{phase_lst[w]}}_name" type="checkbox">
+        
+      </div>
+      </td> 
+      {% endfor %}
+      
+      </tr>
+      
+      
+      </table>
+
+    <script>
+      // shows the addition table(s) for the given phase
+      function show_phase(phase_id,phase_name) {
+        phase_num = Number(phase_id.slice(0,-6));
+        phase = phase_name.slice(0,-5);
+        if (document.getElementById(phase_num + '_phase').checked === true) {
+          document.getElementById(phase + '_div').style.display = 'block'
+          document.getElementById('phase_on_or_off' + phase_num).value = 'on'
+        } else {
+          document.getElementById(phase + '_div').style.display = 'none'
+          document.getElementById('phase_on_or_off' + phase_num).value = 'off'
+        }
+      }
+    </script>
+
+    </div>
+
+    <p></p>
+    <input name="add_btn" onclick="auto_pop_all_additions()" type="button" value="Auto-populate For All Runs" class="btn btn-primary btn-sm" style="background-color:#006fba;border-color:#006fba;box-shadow:none;"></button>
+
+    <p></p>
+
+    <style>
+      .sticky-row {
+          position: -webkit-sticky;
+          position: sticky;
+          background-color: white;
+      }
+
+      .first-row {
+          height: 100px;
+          min-height: 100px;
+          max-height: 100px;
+          top: 0px;
+      }
+    </style>
+
+      <table id="my_table2">
+    
+      <tr>
+        {% for i in range(num_runs) %}
+        <td class="sticky-row first-row">
+    
+    
+    <div class="form-group "><label class="control-label" for="run_id">Run Name</label>
+    
+              <input class="form-control" id="run_id" name="run_id" type="text" value="">
+    
+      </div>
+
+      
+    
+    </div>
+    {% endfor %}
+    </tr>
+  
+        
+    
+    <tr>
+        {% for i in range(num_runs) %}
+        <td>
+    
+    
+            <div class="form-group  required"><label class="control-label" for="process_version_name_used_as_template">Process Version Name (used as template)</label>
+                    
+                <select class="form-control" id="process_version_name_used_as_template" name="process_version_name_used_as_template">
+                    
+                    <option disabled selected value> -- select an option -- </option>
+                    {% for q in range(addition_versions | length) %}
+                    <option value="{{addition_versions[q]}}">{{addition_versions[q]}}</option>
+                    {% endfor %}
+    
+                </select>
+                
+            </div>
+    
+    </div>
+    {% endfor %}
+    </tr>
+    
+    
+    <tr>
+        {% for i in range(num_runs) %}
+        <td>
+    
+          <div class="form-group "><label class="control-label" for="autopop">Auto-populate fields for this run?</label>
+            
+            <select class="form-control" name="autopop" id="autopop{{i}}"><option value="no">No</option><option value="yes">Yes</option></select>
+              
+        </div>
+    
+    
+    </div>
+    {% endfor %}
+    </tr>
+
+    <tr>
+      {% for i in range(num_runs) %}
+      <td>
+  
+  
+          <div class="form-group  required"><label class="control-label" for="process_version_name">Process Version Name (actual)</label>
+                  
+              <select class="form-control" id="process_version_name" name="process_version_name">
+                  
+                  <option disabled selected value> -- select an option -- </option>
+                  {% for q in range(addition_versions | length) %}
+                  <option value="{{addition_versions[q]}}">{{addition_versions[q]}}</option>
+                  {% endfor %}
+  
+              </select>
+              
+          </div>
+  
+  </div>
+  {% endfor %}
+  </tr>
+
+
+    <tr>
+      {% for i in range(num_runs) %}
+      <td>
+  
+        <div class="form-group "><label class="control-label" for="initial_batch_vol_ml">Initial Batch Volume (mL)</label>
+          
+          <input onchange="calculate_water_target_amount(this.id)" class="form-control" id="batch_{{i}}" name="initial_batch_vol_ml" type="number" value="">
+            
+      </div>
+  
+  
+  </div>
+  {% endfor %}
+  </tr>
+
+
+  <tr>
+    {% for i in range(num_runs) %}
+    <td>
+
+      <div class="form-group "><label class="control-label" for="water_gain_loss">Water Gain/Loss</label>
+        
+        <input onchange="calculate_water_target_amount(this.id)" class="form-control" id="water_{{i}}" name="water_gain_loss" type="number" value="">
+          
+    </div>
+
+
+</div>
+{% endfor %}
+</tr>
+        
+    
+    </table>
+    <hr>
+
+    
+    {% for j in range(num_phases) %}
+
+    <div id="{{phase_lst[j]}}_div" style="display:none">
+    
+    <h5>{{phase_lst[j]}}</h5>
+
+    {% for k in range(max_additions) %}
+
+    <div id="phase_{{j}}_add_{{k}}" style="display:block">
+    
+    <h6>New Addition for {{phase_lst[j]}}</h6>
+
+    <table id="my_table2">
+
+      <tr>
+        {% for i in range(num_runs) %}
+        <td>
+    
+    <div class="form-group "><label class="control-label" for="addition_name">Addition Name</label>
+            
+              <input onchange="calculate_water_target_amount(this.id)" class="form-control" list="water_lst" id="addit_{{i}}_{{j}}_{{k}}" name="addit" type="text" value="">
+              <datalist id="water_lst">
+                <option value="DI H20 (Water)">DI H20 (Water)</option>
+              </datalist>
+              <br>
+              <div id="water_checkbox_div_{{i}}_{{j}}_{{k}}" style="display:none;">
+                Check to Trigger Calculation: &nbsp;<input onchange="calculate_water_target_amount(this.id)" style="box-shadow:none;" id="check_{{i}}_{{j}}_{{k}}" name="check_{{i}}_{{j}}_{{k}}" type="checkbox">
+            </div>
+      </div>    
+
+    </td>
+    {% endfor %}
+    </tr>
+    
+    </table>
+
+
+      
+    <div id="phase_{{j}}_toggle_{{k}}" style="display:none">
+      <table id="my_table2">
+      <tr>
+        {% for i in range(num_runs) %}
+        <td>
+    
+    <div class="form-group "><label class="control-label" for="target_phase_of_addition">Target Phase of Addition</label>
+            
+              <input class="form-control" readonly id="target_phase_of_addition" name="target_phase_of_addition" type="text" value="{{phase_lst[j]}}">
+            
+      </div>
+    
+        
+    </td>
+    {% endfor %}
+    </tr>
+  
+    
+    
+      <tr>
+        {% for i in range(num_runs) %}
+        <td>
+    
+    <div class="form-group "><label class="control-label" for="nth_addition">Nth Addition</label>
+            
+              <input class="form-control" id="nth_addition" name="nth_addition" step="any" type="number" value="">
+            
+      </div>
+    
+    
+    </td>
+    {% endfor %}
+    </tr>
+        
+    
+
+    
+      <tr>
+        {% for i in range(num_runs) %}
+        <td>
+    
+    <div class="form-group "><label class="control-label" for="target_batch_concentration_ml_li">Target Batch Concentration (mL/Li)</label>
+            
+              <input class="form-control" id="target_batch_concentration_ml_li" name="target_batch_concentration_ml_li" step="any" type="number" value="">
+            
+      </div>
+    
+    
+    </td>
+    {% endfor %}
+    </tr>
+        
+    
+    
+      <tr>
+        {% for i in range(num_runs) %}
+        <td>
+    
+    <div class="form-group "><label class="control-label" for="target_amount_ml">Target Amount (mL)</label>
+            
+              <input onchange="calculate_water_target_amount(this.id)" class="form-control" id="targe_{{i}}_{{j}}_{{k}}" name="target_amount_ml" step="any" type="number" value="">
+            
+      </div>
+    
+    
+        
+    </td>
+    {% endfor %}
+    </tr>
+    
+    
+      <tr>
+        {% for i in range(num_runs) %}
+        <td>
+    
+    <div class="form-group "><label class="control-label" for="target_phase_time_h">Target Phase Time H</label>
+            
+              <input class="form-control" id="target_phase_time_h" name="target_phase_time_h" step="any" type="number" value="">
+            
+      </div>
+    
+    
+        
+    </td>
+    {% endfor %}
+    </tr>
+    
+    
+      <tr>
+        {% for i in range(num_runs) %}
+        <td>
+    
+    <div class="form-group "><label class="control-label" for="actual_amount_added_ml">Actual Amount Added (mL)</label>
+            
+              <input class="form-control" id="actual_amount_added_ml" name="actual_amount_added_ml" step="any" type="number" value="">
+            
+      </div>
+    
+    
+        
+    </td>
+    {% endfor %}
+    </tr>
+    
+    
+      <tr>
+        {% for i in range(num_runs) %}
+        <td>
+    
+    <div class="form-group "><label class="control-label" for="actual_start_time_of_addition">Actual Start Time of Addition</label>
+            
+              <input class="form-control" id="actual_start_time_of_addition" name="actual_start_time_of_addition" type="datetime-local" value="">
+            
+      </div>
+    
+    
+    </td>
+    {% endfor %}
+    </tr>
+        
+    
+    
+      <tr>
+        {% for i in range(num_runs) %}
+        <td>
+    
+    <div class="form-group "><label class="control-label" for="actual_stop_time_of_addition">Actual Stop Time of Addition</label>
+            
+              <input class="form-control" id="actual_stop_time_of_addition" name="actual_stop_time_of_addition" type="datetime-local" value="">
+            
+      </div>
+    
+    
+        
+    </td>
+    {% endfor %}
+    </tr>
+    
+    
+    
+      <tr>
+        {% for i in range(num_runs) %}
+        <td>
+    <div class="form-group "><label class="control-label" for="addition_lot_id">Addition Lot ID</label>
+            
+              <input class="form-control" id="addition_lot_id" name="addition_lot_id" type="text" value="">
+            
+      </div>
+    
+    
+        
+    </td>
+    {% endfor %}
+    </tr>
+    
+    
+      <tr>
+        {% for i in range(num_runs) %}
+        <td>
+    
+    <div class="form-group "><label class="control-label" for="addition_type">Addition Type</label>
+            
+              <input onchange="show_three_rows(this.id)" list="addition_type_lst" class="form-control" id="atype_{{i}}_{{j}}_{{k}}" name="addition_type" type="text" value="">
+            
+              <datalist id="addition_type_lst">
+                <option value="Constant">Constant</option>
+              </datalist>
+      </div>
+    
+    
+    </td>
+    {% endfor %}
+    </tr>
+
+    </table>
+        
+    <div id="only_show_if_constant_{{j}}_{{k}}" style="display:none">
+      <table id="my_table2">
+      <tr>
+        {% for i in range(num_runs) %}
+        <td>
+    
+    <div class="form-group "><label class="control-label" for="target_addition_rate_ml_h_li">Target Addition Rate (mL/H/Li)</label>
+            
+              <input class="form-control" id="target_addition_rate_ml_h_li" name="target_addition_rate_ml_h_li" step="any" type="number" value="">
+            
+      </div>
+    
+    
+    </td>
+    {% endfor %}
+    </tr>
+        
+    
+    
+      <tr>
+        {% for i in range(num_runs) %}
+        <td>
+    
+    <div class="form-group "><label class="control-label" for="target_addition_rate_ml_h">Target Addition Rate (mL/H)</label>
+            
+              <input class="form-control" id="target_addition_rate_ml_h" name="target_addition_rate_ml_h" step="any" type="number" value="">
+            
+      </div>
+    
+      
+    </td>
+    {% endfor %}
+    </tr>
+
+
+
+    
+    <tr>
+        {% for i in range(num_runs) %}
+        <td>
+    
+    <div class="form-group "><label class="control-label" for="actual_addition_rate_ml_h">Actual Addition Rate (mL/H)</label>
+            
+              <input class="form-control" id="actual_addition_rate_ml_h" name="actual_addition_rate_ml_h" step="any" type="number" value="">
+            
+      </div>
+    
+      
+    </td>
+    {% endfor %}
+    </tr>
+
+
+
+    
+    </table>
+
+  </div>
+
+  </div>
+
+  <button onclick="expand(this.id,this.name)" id="{{j}}" name="{{k}}" type="button" class="btn btn-primary btn-sm" style="box-shadow:none;">Toggle Rows</button>
+
+
+  </div>
+
+  <p></p>
+
+  {% endfor %}
+
+    <input name="add_btn" onclick="add_new_addition(this.id)" id="{{j}}_btn" type="button" value="Add New Addition for {{phase_lst[j]}}" class="btn btn-primary btn-sm" style="background-color:#006fba;border-color:#006fba;box-shadow:none;"></button>
+
+    
+    <hr>
+    
+  </div>
+
+    {% endfor %}
+
+  
+
+  
+      <input type="submit" value="Push to Database" class="btn btn-primary" style="background-color:#006fba;border-color:#006fba">
+    
+    
+    <p></p>
+
+    <script>
+      // sets additions 2 to max_additions to invisible (can toggle them out later)
+      for (let j = 0; j < Number('{{num_phases}}'); j++) {
+        for (let i = 1; i < Number('{{max_additions}}'); i++) {
+          document.getElementById(`phase_${j}_add_${i}`).style.display = 'none';
+        }
+      }
+    </script>
+
+    <script> 
+      // Assigns IDs to all form fields for Production Addition (format: "2-number")
+      let id1 = 1;
+      const run_names = document.querySelectorAll('#addition-div [id=run_id]');
+      run_names.forEach(function(el) {
+          new_id = id1++;
+          el.name = "2-" + new_id.toString();
+      });
+      const process_version_name_used_as_templates = document.querySelectorAll('#addition-div [id=process_version_name_used_as_template]');
+      process_version_name_used_as_templates.forEach(function(el) {
+          new_id = id1++;
+          el.name = "2-" + new_id.toString();
+      });
+      const autopops = document.querySelectorAll('#addition-div [name=autopop]');
+      autopops.forEach(function(el) {
+          new_id = id1++;
+          el.name = "2-" + new_id.toString();
+      });
+      const process_version_names = document.querySelectorAll('#addition-div [id=process_version_name]');
+      process_version_names.forEach(function(el) {
+          new_id = id1++;
+          el.name = "2-" + new_id.toString();
+      });
+      const initial_batch_vol_mls = document.querySelectorAll('#addition-div [name=initial_batch_vol_ml]');
+      initial_batch_vol_mls.forEach(function(el) {
+          new_id = id1++;
+          el.name = "2-" + new_id.toString();
+      });
+      const water_gain_losss = document.querySelectorAll('#addition-div [name=water_gain_loss]');
+      water_gain_losss.forEach(function(el) {
+          new_id = id1++;
+          el.name = "2-" + new_id.toString();
+      });
+      id = 6*Number('{{num_runs}}') + 1;
+      const cells1 = document.querySelectorAll('#addition-div input');
+      cells1.forEach(function(el) {
+      if (el.type != 'checkbox' && el.id.substring(0,6) != 'batch_' && el.id.substring(0,6) != 'water_' && el.name != 'add_btn' && el.name != 'expand_btn' && el.type != 'submit' && el.id != "num_runs" && el.id != "num_phases" && el.id != 'run_id' && el.id != 'num_timepoints' && el.id != 'process_version_name_used_as_template' && el.id != 'autopop' && el.id != 'run_name_to_save' && el.id != 'reactor_id_to_save' && el.id != 'actual_inoculation_time_to_save' && el.id != 'actual_fed_batch_start_time_to_save' && el.id != 'actual_induction_start_time_to_save' && el.id != 'feed_media_1_to_save') {
+          new_id = id++;
+          el.name = "2-" + new_id.toString();
+      }
+      });
+    </script>
+
+    <script>
+      // make 3 rows disappear or reappear if addition type = "Constant"
+      function show_three_rows(all_info) {
+        n_runs = Number('{{num_runs}}')
+        all_info_lst = (all_info.substring(6)).split('_'); // run_phase_addition
+        curr_run = Number(all_info_lst[0]) // i
+        if (all_info_lst.length != 1) {
+          curr_phase = Number(all_info_lst[1]) // j
+          curr_add = Number(all_info_lst[2]) // k
+        }
+        for (let i = 0; i < Number('{{num_phases}}'); i++) {
+          num_additions_current = document.getElementById('num_additions_lst' + i).value
+          for (let j = 0; j < Number(num_additions_current); j++) {
+              addition_type = document.getElementsByName('2-' + (6*n_runs + 1 + 10*i*14*n_runs + 14*j*n_runs + 10*n_runs + curr_run))[0].value
+              if (document.getElementById('phase_on_or_off' + i).value === 'on') {
+                if (addition_type === 'constant' || addition_type === 'Constant' || addition_type === 'CONSTANT') {
+                  const els = document.getElementById(`only_show_if_constant_${i}_${j}`).style.display = 'block'
+                } else {
+                  const els = document.getElementById(`only_show_if_constant_${i}_${j}`).style.display = 'none'
+                } 
+              }
+          }
+        }
+      }
+    </script>
+
+    <script>
+      // does the water target amount calculation
+      function calculate_water_target_amount(all_info) {
+        n_runs = Number('{{num_runs}}')
+        all_info_lst = (all_info.substring(6)).split('_'); // run_phase_addition
+        curr_run = Number(all_info_lst[0]) // i
+        if (all_info_lst.length != 1) {
+          curr_phase = Number(all_info_lst[1]) // j
+          curr_add = Number(all_info_lst[2]) // k
+          if (document.getElementById(`addit_${curr_run}_${curr_phase}_${curr_add}`).value === 'DI H20 (Water)') {
+            document.getElementById(`water_checkbox_div_${curr_run}_${curr_phase}_${curr_add}`).style.display = 'block'
+          } else {
+            document.getElementById(`water_checkbox_div_${curr_run}_${curr_phase}_${curr_add}`).style.display = 'none'
+          }
+        }
+        // do water target amount calculation
+        initial_batch_vol = (document.getElementsByName('2-' + (4*Number('{{num_runs}}') + curr_run + 1))[0].value)
+        water_gain_loss = Number(document.getElementsByName('2-' + (5*Number('{{num_runs}}') + curr_run + 1))[0].value)
+        if (initial_batch_vol != '') {
+          target_amount_sum = 0
+          for (let i = 0; i < Number('{{num_phases}}'); i++) {
+            // only add to the sum with additions from Pre, Post, and Inoc
+            if (document.getElementById(`phase_lst_for_html${i}`).value === 'Pre-Sterilization' || document.getElementById(`phase_lst_for_html${i}`).value === 'Post-Sterilization' || document.getElementById(`phase_lst_for_html${i}`).value === 'Inoculation') {
+              num_additions_current = document.getElementById('num_additions_lst' + i).value
+              if (document.getElementById('phase_on_or_off' + i).value === 'on') {
+                for (let j = 0; j < Number(num_additions_current); j++) {
+                  addition_name = document.getElementsByName('2-' + (6*n_runs + 1 + 10*i*14*n_runs + 14*j*n_runs + curr_run))[0].value
+                  if (! document.getElementById(`check_${curr_run}_${i}_${j}`).checked) {
+                    target_amount = document.getElementsByName('2-' + (6*n_runs + 1 + 10*i*14*n_runs + 14*j*n_runs + 4*n_runs + curr_run))[0].value
+                    if (target_amount != '') {
+                      target_amount_sum += Number(target_amount)
+                    }
+                  }
+                }
+              }
+            }
+          }
+          for (let i = 0; i < Number('{{num_phases}}'); i++) {
+            // Only do this calculation if the water addition is in Pre or Post
+            if (document.getElementById(`phase_lst_for_html${i}`).value === 'Pre-Sterilization' || document.getElementById(`phase_lst_for_html${i}`).value === 'Post-Sterilization') {
+            num_additions_current = document.getElementById('num_additions_lst' + i).value
+            if (document.getElementById('phase_on_or_off' + i).value === 'on') {
+              for (let j = 0; j < Number(num_additions_current); j++) {
+                addition_name = document.getElementsByName('2-' + (6*n_runs + 1 + 10*i*14*n_runs + 14*j*n_runs + curr_run))[0].value
+                if (document.getElementById(`check_${curr_run}_${i}_${j}`).checked) {
+                  document.getElementsByName('2-' + (6*n_runs + 1 + 10*i*14*n_runs + 14*j*n_runs + 4*n_runs + curr_run))[0].value = initial_batch_vol - water_gain_loss - target_amount_sum
+                  return // only does calculation for first checked box
+                }
+              }
+              }
+            }
+          }
+        }
+      }
+    </script>
+
+    <script>
+    // controls button that expands all of the rows for a given addition
+    function expand(phase_num,add_num) {
+      if (document.getElementById(`phase_${phase_num}_toggle_${add_num}`).style.display === 'none') {
+        document.getElementById(`phase_${phase_num}_toggle_${add_num}`).style.display = 'block';
+      } else {
+        document.getElementById(`phase_${phase_num}_toggle_${add_num}`).style.display = 'none';
+      }
+    }
+    </script>
+
+    <script>
+      // adds a new addition for a given phase (up to 10 per phase)
+      function add_new_addition(phase_btn) {
+        curr_phase = phase_btn.slice(0,-4);
+        if (document.getElementById(`phase_${curr_phase}_add_9`).style.display === 'block') {
+          alert('Max of 10 additions per phase');
+          return
+        }
+        if (document.getElementById(`phase_${curr_phase}_add_8`).style.display === 'block') {
+          document.getElementById(`phase_${curr_phase}_add_9`).style.display = 'block';
+          return add_additions(curr_phase);
+        }
+        if (document.getElementById(`phase_${curr_phase}_add_7`).style.display === 'block') {
+          document.getElementById(`phase_${curr_phase}_add_8`).style.display = 'block';
+          return add_additions(curr_phase);
+        }
+        if (document.getElementById(`phase_${curr_phase}_add_6`).style.display === 'block') {
+          document.getElementById(`phase_${curr_phase}_add_7`).style.display = 'block';
+          return add_additions(curr_phase);
+        }
+        if (document.getElementById(`phase_${curr_phase}_add_5`).style.display === 'block') {
+          document.getElementById(`phase_${curr_phase}_add_6`).style.display = 'block';
+          return add_additions(curr_phase);
+        }
+        if (document.getElementById(`phase_${curr_phase}_add_4`).style.display === 'block') {
+          document.getElementById(`phase_${curr_phase}_add_5`).style.display = 'block';
+          return add_additions(curr_phase);
+        }
+        if (document.getElementById(`phase_${curr_phase}_add_3`).style.display === 'block') {
+          document.getElementById(`phase_${curr_phase}_add_4`).style.display = 'block';
+          return add_additions(curr_phase);
+        }
+        if (document.getElementById(`phase_${curr_phase}_add_2`).style.display === 'block') {
+          document.getElementById(`phase_${curr_phase}_add_3`).style.display = 'block';
+          return add_additions(curr_phase);
+        }
+        if (document.getElementById(`phase_${curr_phase}_add_1`).style.display === 'block') {
+          document.getElementById(`phase_${curr_phase}_add_2`).style.display = 'block';
+          return add_additions(curr_phase);
+        }
+        if (document.getElementById(`phase_${curr_phase}_add_0`).style.display === 'block') {
+          document.getElementById(`phase_${curr_phase}_add_1`).style.display ='block';
+          return add_additions(curr_phase);
+        }
+      }
+      // helper function that adds to the appropriate variables when an addition is added (helps with pushing the correct data to DB)
+      function add_additions(curr_phase) {
+        var el = document.getElementById(`num_additions_lst${curr_phase}`);
+        el.value = String(Number(el.value) + 1);
+        var el2 = document.getElementById(`num_additions`);
+        el2.value = String(Number(el2.value) + 1);
+      }
+    </script>
+
+    <script>
+      // controls button that selects "yes" for all auto-populate? fields
+      function auto_pop_all_additions() {
+        var colCount = document.getElementById('my_table1').rows[0].cells.length;
+        for (let i = 0; i < colCount; i++) {
+          $("#autopop" + i).val("yes").trigger('change');
+        }
+      }
+    </script>
+
+    <script>
+      // auto-fill based on process version
+       $('#addition-div select').on('change', function() {
+      starting_id = 6*Number('{{num_runs}}') + 1;
+      let changed_elem = Number(this.name.slice(2));
+      let run = (changed_elem % Number('{{num_runs}}')) - 1;
+      d = JSON.parse('{{add_rows | tojson}}');
+      if (changed_elem > Number('{{num_runs}}')*2 && changed_elem <= Number('{{num_runs}}')*3) {
+        auto = this.value;
+        if (auto == 'yes') {
+          prot = document.getElementsByName("2-" + (changed_elem-(Number('{{num_runs}}'))))[0];
+          var opt = prot.options[prot.selectedIndex];
+          if (run == -1) {
+            run += Number('{{num_runs}}')
+          }
+          for (let j = 0; j < d.length; j++) {
+              var r = d[j];
+              if (r.process_version_name_used_as_template == opt.text) {
+                for (let k = 0; k < 10*Number('{{num_phases}}'); k++) {
+                  if (r.phase == document.getElementsByName('2-' + (starting_id + run + (k*14*Number('{{num_runs}}')) + (Number('{{num_runs}}')*1)).toString())[0].value) {
+                    document.getElementsByName('2-' + (starting_id + run + (k*14*Number('{{num_runs}}')) + (Number('{{num_runs}}')*0)).toString())[0].value = r.addition_name;
+                    document.getElementsByName('2-' + (starting_id + run + (k*14*Number('{{num_runs}}')) + (Number('{{num_runs}}')*5)).toString())[0].value = r.target_phase_time_h;
+                    document.getElementsByName('2-' + (starting_id + run + (k*14*Number('{{num_runs}}')) + (Number('{{num_runs}}')*3)).toString())[0].value = r.target_batch_concentration_ml_li;
+                    document.getElementById(r.phase + '_div').style.display = 'block';
+                    document.getElementById('phase_on_or_off' + Math.floor(k/10)).value = 'on';
+                    document.getElementById(Math.floor(k/10) + '_phase').checked = true;
+                  }
+                }
+              }
+          }
+        } else {
+          for (let k = 0; k < 10*Number('{{num_phases}}'); k++) {
+            for (let u = 3; u < 14; u++) { // doesn't remove first 2 rows (addition name and target phase of addition)
+                el = document.getElementsByName('2-' + (starting_id + run + (k*14*Number('{{num_runs}}')) + (Number('{{num_runs}}')*u)).toString())[0]
+                el.value = '';
+            }
+          }
+        }
+      } else if (changed_elem <= Number('{{num_runs}}')*2) { // on change of prot, change current values
+        id_auto = changed_elem + Number('{{num_runs}}');
+        auto = document.getElementsByName("2-" + id_auto)[0].value;
+        if (auto == 'yes') {
+          prot = document.getElementsByName("2-" + (changed_elem))[0];
+          var opt = prot.options[prot.selectedIndex];
+          if (run == -1) {
+            run += Number('{{num_runs}}')
+          }
+          for (let j = 0; j < d.length; j++) {
+              var r = d[j];
+              if (r.process_version_name_used_as_template == opt.text) {
+                for (let k = 0; k < 10*Number('{{num_phases}}'); k++) {
+                  if (r.phase == document.getElementsByName('2-' + (starting_id + run + (k*14*Number('{{num_runs}}')) + (Number('{{num_runs}}')*1)).toString())[0].value) {
+                    document.getElementsByName('2-' + (starting_id + run + (k*14*Number('{{num_runs}}')) + (Number('{{num_runs}}')*0)).toString())[0].value = r.addition_name;
+                    document.getElementsByName('2-' + (starting_id + run + (k*14*Number('{{num_runs}}')) + (Number('{{num_runs}}')*5)).toString())[0].value = r.target_phase_time_h;
+                    document.getElementsByName('2-' + (starting_id + run + (k*14*Number('{{num_runs}}')) + (Number('{{num_runs}}')*3)).toString())[0].value = r.target_batch_concentration_ml_li;
+                    document.getElementById(r.phase + '_div').style.display = 'block';
+                    document.getElementById('phase_on_or_off' + Math.floor(k/10)).value = 'on';
+                    document.getElementById(Math.floor(k/10) + '_phase').checked = true;
+                  }
+                }
+              }
+          }
+        } else {
+          for (let k = 0; k < 10*Number('{{num_phases}}'); k++) {
+            for (let u = 3; u < 14; u++) {
+                el = document.getElementsByName('2-' + (starting_id + run + (k*14*Number('{{num_runs}}')) + (Number('{{num_runs}}')*u)).toString())[0]
+                el.value = '';
+            }
+          }
+        }
+      }
+    });
+  </script>
+
+
+
+</div>
+
+
+<div id="timepoint-div" style="display:none">
+
+    <h4>Growth Data</h4>
+    <hr>
+    
+    <label>Upload CEDEX File:</label>
+    <br>
+    <input type="file"
+           id="file-upload"
+           accept=".txt" onchange="loadFile(this.files[0])"></input>
+    
+    <hr>
+
+    <style>
+      .sticky-col {
+        position: -webkit-sticky;
+        position: sticky;
+        background-color: white;
+    }
+
+    .first-col {
+        width: 125px;
+        min-width: 125px;
+        max-width: 125px;
+        left: 0px;
+    }
+
+    .second-col {
+        width: 125px;
+        min-width: 125px;
+        max-width: 125px;
+        left: 125px;
+    }
+
+    .third-col {
+        width: 125px;
+        min-width: 125px;
+        max-width: 125px;
+        left: 250px;
+    }
+
+    .fourth-col {
+        width: 125px;
+        min-width: 125px;
+        max-width: 125px;
+        left: 375px;
+    }
+
+    .fifth-col {
+        width: 175px;
+        min-width: 175px;
+        max-width: 175px;
+        left: 500px;
+    }
+
+    </style>
+
+         
+          {% for i in range(num_runs) %}
+          <h5>Run {{i+1}}</h5>
+          <table id="my_table3" style="table-layout:fixed;width:600%">
+             <tbody>
+            {% for j in range(num_timepoint_lst[i]) %}
+            <tr>
+               
+                <td class="sticky-col first-col">
+                <div><label class="control-label" for="run_id">Run Name</label>
+            
+                    <input class="form-control" id="run_id{{i}}" name="run_id" type="text" value="">
+                  
+            </div>
+          
+          </td>
+              
+          
+          
+            <td class="sticky-col second-col">
+          
+          <div class="form-group "><label class="control-label" for="ferm_sample_id">Ferm Sample ID</label>
+                  
+                    <input class="form-control" id="ferm_sample_id" name="ferm_sample_id" type="text" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+            <td class="sticky-col third-col">
+          
+          <div class="form-group "><label class="control-label" for="reactor_id_temp">Reactor ID Temp</label>
+                  
+                    <input class="form-control" id="reactor_id_temp" name="reactor_id_temp" value="" type="text" value="">
+                  
+            </div>
+          
+          
+        </td>
+          
+          
+            <td class="sticky-col fourth-col">
+          
+          <div class="form-group "><label class="control-label" for="ferm_stage">Ferm Stage</label>
+                  
+                    <input class="form-control" id="ferm_stage" name="ferm_stage" type="text" value="">
+                  
+            </div>
+          
+          
+        </td>
+
+
+
+        <td class="sticky-col fifth-col">
+          <div class="form-group "><label class="control-label" for="datetime">Datetime</label>
+                  
+                    <input onchange="calculate_fields()" class="form-control" id="datetime" name="datetime" type="datetime-local" value="">
+                  
+            </div>
+          
+        </td>
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="notes">Notes</label>
+                  
+                    <input class="form-control" id="notes" name="notes" type="text" value="">
+                  
+            </div>
+          
+          
+              
+        </td>
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="eft_h">EFT H</label>
+                  
+                    <input onchange="calculate_rates()" class="form-control" id="eft_h" name="eft_h" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="time_post_induction_h">Time Post Induction H</label>
+                  
+                    <input class="form-control" id="time_post_induction_h" name="time_post_induction_h" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="rounded_post_induction_time_h">Rounded Post Induction Time H</label>
+                  
+                    <input class="form-control" id="rounded_post_induction_time_h" name="rounded_post_induction_time_h" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="post_feed_start_time_h">Post Feed Start Time H</label>
+                  
+                    <input class="form-control" id="post_feed_start_time_h" name="post_feed_start_time_h" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="o2_flow_percent">O2 Flow Percent</label>
+                  
+                    <input class="form-control" id="o2_flow_percent" name="o2_flow_percent" step="any" type="number" value="">
+                  
+            </div>
+          
+          
+        </td>
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="total_gas_flow_slpm">Total Gas Flow SLPM</label>
+                  
+                    <input class="form-control" id="total_gas_flow_slpm" name="total_gas_flow_slpm" step="any" type="number" value="">
+                  
+            </div>
+          
+          
+        </td>
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="base_totalizer_ml">Base Totalizer (mL)</label>
+                  
+                    <input class="form-control" id="base_totalizer_ml" name="base_totalizer_ml" step="any" type="number" value="">
+                  
+            </div>
+          
+          
+              
+        </td>
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="base_consumed_g">Base Consumed (g)</label>
+                  
+                    <input class="form-control" id="base_consumed_g" name="base_consumed_g" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="feed_weight_g">Feed Weight (g)</label>
+                  
+                    <input onchange="calculate_fields()" class="form-control" id="feed_weight_g" name="feed_weight_g" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="amount_of_feed_added_g">Amount of Feed Added (g)</label>
+                  
+                    <input onchange="calculate_fields()" class="form-control" id="amount_of_feed_added_g" name="amount_of_feed_added_g" step=".01" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="amount_of_feed_added_ml">Amount of Feed Added (ml)</label>
+                  
+                    <input class="form-control" id="amount_of_feed_added_ml" name="amount_of_feed_added_ml" step=".01" type="number" value="">
+                  
+            </div>
+        </td>
+    
+    
+        <td>
+            <div class="form-group "><label class="control-label" for="antifoam_weight_g">Antifoam Weight (g)</label>
+                    
+                      <input class="form-control" id="antifoam_weight_g" name="antifoam_weight_g" step="any" type="number" value="">
+                    
+              </div>
+          </td>
+    
+          <td>
+            <div class="form-group "><label class="control-label" for="scale_1_weight_g">Scale 1 Weight (g)</label>
+                    
+                      <input onchange="calculate_rates()" class="form-control" id="scale_1_weight_g" name="scale_1_weight_g" step="any" type="number" value="">
+                    
+              </div>
+          </td>
+    
+          <td>
+            <div class="form-group "><label class="control-label" for="pump_1_rpm">Pump 1 (RPM)</label>
+                    
+                      <input class="form-control" id="pump_1_rpm" name="pump_1_rpm" step="any" type="number" value="">
+                    
+              </div>
+          </td>
+    
+          <td>
+            <div class="form-group "><label class="control-label" for="rate_from_scale_1_g_h">Rate from Scale 1 (g/h)</label>
+                    
+                      <input class="form-control" id="rate_from_scale_1_g_h" name="rate_from_scale_1_g_h" step=".01" type="number" value="">
+                    
+              </div>
+          </td>
+    
+    
+          <td>
+            <div class="form-group "><label class="control-label" for="scale_2_weight_g">Scale 2 Weight (g)</label>
+                    
+                      <input onchange="calculate_rates()" class="form-control" id="scale_2_weight_g" name="scale_2_weight_g" step="any" type="number" value="">
+                    
+              </div>
+          </td>
+    
+          <td>
+            <div class="form-group "><label class="control-label" for="pump_2_rpm">Pump 2 (RPM)</label>
+                    
+                      <input class="form-control" id="pump_2_rpm" name="pump_2_rpm" step="any" type="number" value="">
+                    
+              </div>
+          </td>
+    
+          <td>
+            <div class="form-group "><label class="control-label" for="rate_from_scale_2_g_h">Rate from Scale 2 (g/h)</label>
+                    
+                      <input class="form-control" id="rate_from_scale_2_g_h" name="rate_from_scale_2_g_h" step=".01" type="number" value="">
+                    
+              </div>
+          </td>
+          
+              
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="offline_ph">Offline pH</label>
+                  
+                    <input class="form-control" id="offline_ph" name="offline_ph" step="any" type="number" value="">
+                  
+            </div>
+        </td>
+              
+          
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="od595">OD 595</label>
+                  
+                    <input class="form-control" id="od595" name="od595" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="od_bioht">OD Bio HT</label>
+                  
+                    <input class="form-control" id="od_bioht" name="od_bioht" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="bioht_glucose_g_l">Bio HT Glucose (g/L)</label>
+                  
+                    <input class="form-control" id="bioht_glucose_g_l" name="bioht_glucose_g_l" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="bioht_lactate_mmol">Bio HT Lactate (mmol)</label>
+                  
+                    <input class="form-control" id="bioht_lactate_mmol" name="bioht_lactate_mmol" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="bioht_acetate_mmol">Bio HT Acetate (mmol)</label>
+                  
+                    <input class="form-control" id="bioht_acetate_mmol" name="bioht_acetate_mmol" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="bioht_ammonia_mmol">Bio HT Ammonia (mmol)</label>
+                  
+                    <input class="form-control" id="bioht_ammonia_mmol" name="bioht_ammonia_mmol" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="bioht_glutamine_mmol">Bio HT Glutamine (mmol)</label>
+                  
+                    <input class="form-control" id="bioht_glutamine_mmol" name="bioht_glutamine_mmol" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+              
+          
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="bioht_glutamate_mmol">Bio HT Glutamate (mmol)</label>
+                  
+                    <input class="form-control" id="bioht_glutamate_mmol" name="bioht_glutamate_mmol" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="bioht_phosphate_mmol">Bio HT Phosphate (mmol)</label>
+                  
+                    <input class="form-control" id="bioht_phosphate_mmol" name="bioht_phosphate_mmol" step="any" type="number" value="">
+                  
+            </div>
+          
+          
+        </td>
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="bioht_magnesium_mmol">Bio HT Magnesium (mmol)</label>
+                  
+                    <input class="form-control" id="bioht_magnesium_mmol" name="bioht_magnesium_mmol" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="osm_mosm_kg">OSM MOSM (kg)</label>
+                  
+                    <input class="form-control" id="osm_mosm_kg" name="osm_mosm_kg" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="bioht_arabinose_mg_l">Bio HT Arabinose (mg/L)</label>
+                  
+                    <input class="form-control" id="bioht_arabinose_mg_l" name="bioht_arabinose_mg_l" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="af_added_ml">AF Added (mL)</label>
+                  
+                    <input class="form-control" id="af_added_ml" name="af_added_ml" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="af_totalizer_ml">AF Totalizer (mL)</label>
+                  
+                    <input class="form-control" id="af_totalizer_ml" name="af_totalizer_ml" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="theoretical_amount_of_feed_added_ml">Theoretical Amount of Feed Added (mL)</label>
+                  
+                    <input class="form-control" id="theoretical_amount_of_feed_added_ml" name="theoretical_amount_of_feed_added_ml" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="percent_diff_in_feed">Percent Diff in Feed</label>
+                  
+                    <input class="form-control" id="percent_diff_in_feed" name="percent_diff_in_feed" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="online_ph">Online pH</label>
+                  
+                    <input class="form-control" id="online_ph" name="online_ph" step="any" type="number" value="">
+                  
+            </div>
+        </td>
+          
+              
+          
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="broth_viscosity_ranking">Broth Viscosity Ranking</label>
+                  
+                    <input class="form-control" id="broth_viscosity_ranking" name="broth_viscosity_ranking" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="bioht_pyruvate_mmol">Bio HT Pyruvate (mmol)</label>
+                  
+                    <input class="form-control" id="bioht_pyruvate_mmol" name="bioht_pyruvate_mmol" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="total_amount_of_antifoam_added_ml">Total Amount of Antifoam Added (mL)</label>
+                  
+                    <input class="form-control" id="total_amount_of_antifoam_added_ml" name="total_amount_of_antifoam_added_ml" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="bioht_ldh_u_l">Bio HT LDH U (L)</label>
+                  
+                    <input class="form-control" id="bioht_ldh_u_l" name="bioht_ldh_u_l" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="bioht_igg_mg_l">Bio HT IGG (mg/L)</label>
+                  
+                    <input class="form-control" id="bioht_igg_mg_l" name="bioht_igg_mg_l" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="bioht_total_protein_g_l">Bio HT Total Protein (g/L)</label>
+                  
+                    <input class="form-control" id="bioht_total_protein_g_l" name="bioht_total_protein_g_l" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="sodium">Sodium</label>
+                  
+                    <input class="form-control" id="sodium" name="sodium" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="potassium">Potassium</label>
+                  
+                    <input class="form-control" id="potassium" name="potassium" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+              
+          
+          
+          
+            <td>
+          <div class="form-group "><label class="control-label" for="bioht_formate_mg_l">Bio HT Formate (mg/L)</label>
+                  
+                    <input class="form-control" id="bioht_formate_mg_l" name="bioht_formate_mg_l" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+    
+        <td>
+            <div class="form-group "><label class="control-label" for="percent_co2">Percent CO2</label>
+                    
+                      <input class="form-control" id="percent_co2" name="percent_co2" step="any" type="number" value="">
+                    
+              </div>
+            
+          </td>
+    
+          <td>
+            <div class="form-group "><label class="control-label" for="bioht_glycerol_mg_l">Bio HT Glycerol (mg/L)</label>
+                    
+                      <input class="form-control" id="bioht_glycerol_mg_l" name="bioht_glycerol_mg_l" step="any" type="number" value="">
+                    
+              </div>
+            
+          </td>
+              
+          
+        
+              
+          
+          
+            <td>
+          
+          <div class="form-group "><label class="control-label" for="gel_titer_g_l">Gel Titer (g/L)</label>
+                  
+                    <input class="form-control" id="gel_titer_g_l" name="gel_titer_g_l" step="any" type="number" value="">
+                  
+            </div>
+          
+        </td>
+    
+                
+            </tr>
+            {% endfor %}
+        </tbody>
+    
+        </table>
+    
+        <hr>
+        {% endfor %}
+    
+        <input type="submit" value="Push to Database" class="btn btn-primary" style="background-color:#006fba;border-color:#006fba">
+    
+
+      <script>
+      // Assigns IDs to all form fields for Growth Data (format: "3-number")
+        let id2 = 1;
+        let input_counter2 = 1;
+        const cells2 = document.querySelectorAll('#timepoint-div input');
+        cells2.forEach(function(el) {
+          if (input_counter2 != 1 && el.id != 'timepoint') {
+            if (el.type != 'submit') {
+                new_id = id2++;
+                el.name = '3-' + new_id.toString();
+            }
+          }
+          input_counter2++;
+        });
+    </script>
+    
+    <script>
+      // loads file, uses dictionary to parse data and input values into web forn
+        async function loadFile(file) {
+            cedex = {};
+            cedex['GLC3B'] = 'bioht_glucose_g_l';
+            cedex['GLC3D'] = 'bioht_glucose_g_l';
+            cedex['GLU2B'] = 'bioht_glutamate_mmol';
+            cedex['GLU2D'] = 'bioht_glutamate_mmol';
+            cedex['AC2B'] = 'bioht_acetate_mmol';
+            cedex['AC2D'] = 'bioht_acetate_mmol';
+            cedex['LDH2B'] = 'bioht_ldh_u_l';
+            cedex['LDH2D'] = 'bioht_ldh_u_l';
+            cedex['PHO2B'] = 'bioht_phosphate_mmol';
+            cedex['PHO2D'] = 'bioht_phosphate_mmol';
+            cedex['NH3B'] = 'bioht_ammonia_mmol';
+            cedex['NH3D'] = 'bioht_ammonia_mmol';
+            cedex['LAC2B'] = 'bioht_lactate_mmol';
+            cedex['LAC2D'] = 'bioht_lactate_mmol';
+            cedex['MG2B'] = 'bioht_magnesium_mmol';
+            cedex['MG2D'] = 'bioht_magnesium_mmol';
+            cedex['ODB'] = 'od_bioht';
+            cedex['ODD'] = 'od_bioht';
+            cedex['GLN2B'] = 'bioht_glutamine_mmol';
+            cedex['GLN2D'] = 'bioht_glutamine_mmol';
+            cedex['TP2B'] = 'bioht_total_protein_g_l';
+            cedex['TP2D'] = 'bioht_total_protein_g_l';
+            cedex['IGGLB'] = 'bioht_igg_mg_l';
+            cedex['IGGHB'] = 'bioht_igg_mg_l';
+            cedex['IGGHD'] = 'bioht_igg_mg_l';
+            cedex['PYRB'] = 'bioht_pyruvate_mmol';
+            cedex['PYRD'] = 'bioht_pyruvate_mmol';
+            cedex['FORB'] = 'bioht_formate_mg_l';
+            cedex['ARAB'] = 'bioht_arabinose_mg_l';
+            cedex['ARAD'] = 'bioht_arabinose_mg_l';
+            cedex['GLYB'] = 'bioht_glycerol_mg_l';
+            cedex['GLYD'] = 'bioht_glycerol_mg_l';
+            let text = await file.text();
+            const parsedString = text.split('\n').map((line) => line.split('\t'));
+            for (var i = 1; i < parsedString.length; i++) {
+                if (parsedString[i].length > 1) {
+                    var code = parsedString[i][2];
+                    var col = cedex[code];
+                    var val = parsedString[i][9];
+                    var ferm = parsedString[i][5];
+                    if (val.includes('<')) {
+                        val = 0;
+                    } else {
+                        val = Number(val);
+                    }
+                    var fields = document.querySelectorAll('#timepoint-div [id=ferm_sample_id]');
+                    var field_lst = [];
+                    fields.forEach(function(el) { 
+                    if (el.value == ferm) {
+                        field_lst.push(el);
+                    }
+                    });
+                    field_lst.forEach(function(field) {
+                    if (field != null) {
+                        let i = Number(field.name.slice(2));
+                        let i_col = 0;
+                        if (col == 'bioht_glucose_g_l') {
+                            i_col = i + 26; // + 7
+                        } else if (col == 'bioht_glutamate_mmol') {
+                            i_col = i + 31; // + 7
+                        } else if (col == 'bioht_acetate_mmol') {
+                            i_col = i + 28;
+                        } else if (col == 'bioht_ldh_u_l') {
+                            i_col = i + 44;
+                        } else if (col == 'bioht_phosphate_mmol') {
+                            i_col = i + 32;
+                        } else if (col == 'bioht_ammonia_mmol') {
+                            i_col = i + 29;
+                        } else if (col == 'bioht_lactate_mmol') {
+                            i_col = i + 27;
+                        } else if (col == 'bioht_magnesium_mmol') {
+                            i_col = i + 33;
+                        } else if (col == 'od_bioht') {
+                            i_col = i + 25;
+                        } else if (col == 'bioht_glutamine_mmol') {
+                            i_col = i + 30;
+                        } else if (col == 'bioht_total_protein_g_l') {
+                            i_col = i + 46;
+                        } else if (col == 'bioht_igg_mg_l') {
+                            i_col = i + 45;
+                        } else if (col == 'bioht_formate_mg_l') {
+                            i_col = i + 49;
+                        } else if (col == 'bioht_arabinose_mg_l') {
+                            i_col = i + 35;
+                        } else if (col == 'bioht_glycerol_mg_l') {
+                            i_col = i + 51;
+                        }
+                        if (i_col != 0) {
+                            document.getElementsByName('3-' + i_col.toString())[0].value = val;
+                        }
+                    }
+                  });
+                }
+            }
+        }
+      </script>
+    
+      <script>
+        // calculates the following fields for each row: amount of feed added mL, EFT H, post feed start time H, time post induction H,
+        // and amount of feed added g
+        function calculate_fields() {
+          let num_runs = Number('{{num_runs}}');
+          curr_run = -1;
+          curr_first_row_feed_weight_g = 0;
+          for (let i = 0; i < Number('{{num_timepoints}}'); i++) {
+              let run_idx = 54*i + 1;
+              let curr_run_id = document.getElementsByName('3-' + run_idx.toString())[0].id;
+              let curr_run_temp = Number(curr_run_id.charAt(6));
+              if (curr_run_temp != curr_run) { // if we've hit the top row of a new run
+                  curr_run = curr_run_temp;
+                  curr_first_row_feed_weight_g_idx = 54*i + 15;
+                  curr_first_row_feed_weight_g_val = document.getElementsByName('3-' + curr_first_row_feed_weight_g_idx.toString())[0].value;
+              } else { // if we're not at the top row of a new run
+                  let curr_feed_weight_g_idx = 54*i + 15;
+                  curr_feed_weight_g_val = document.getElementsByName('3-' + curr_feed_weight_g_idx.toString())[0].value;
+                  let amount_of_feed_added_g_idx = 54*i + 16;
+                  if (curr_feed_weight_g_val != '' && curr_first_row_feed_weight_g_val != '') {
+                      document.getElementsByName('3-' + amount_of_feed_added_g_idx.toString())[0].value = (curr_feed_weight_g_val - curr_first_row_feed_weight_g_val).toFixed(2);
+                  }
+              }
+          }
+          for (let i = 0; i < Number('{{num_timepoints}}'); i++) {
+              // stuff from Sutro Production Batch Record
+              let run_idx = 54*i + 1;
+              let curr_run_id = document.getElementsByName('3-' + run_idx.toString())[0].id;
+              let curr_run = Number(curr_run_id.charAt(6));
+              let feed_media_1 = Number(document.getElementById('1-' + (33*num_runs + (curr_run + 1)).toString()).value);
+              let actual_inoculation_time = new Date(document.getElementById('1-' + (60*num_runs + (curr_run + 1)).toString()).value);
+              let actual_fed_batch_start_time = new Date(document.getElementById('1-' + (61*num_runs + (curr_run + 1)).toString()).value);
+              let actual_induction_start_time = new Date(document.getElementById('1-' + (62*num_runs + (curr_run + 1)).toString()).value);
+              // stuff from current page (Growth Data)
+              let datetime_idx = 54*i + 5;
+              var datetime = -1;
+              if (document.getElementsByName('3-' + datetime_idx.toString())[0].value != "") {
+                  datetime = new Date(document.getElementsByName('3-' + datetime_idx.toString())[0].value);
+              }
+              let amount_feed_added_idx = 54*i + 16;
+              let amount_of_feed_added_g = -1;
+              if (document.getElementsByName('3-' + amount_feed_added_idx.toString())[0].value != "") {
+                  amount_of_feed_added_g = Number(document.getElementsByName('3-' + amount_feed_added_idx.toString())[0].value);
+              }
+              // calculations and assigning values
+              let amount_of_feed_added_ml_idx = 54*i + 17;
+              let amount_of_feed_added_ml_val = amount_of_feed_added_g/feed_media_1;
+              if (amount_of_feed_added_g != -1 && feed_media_1 != '') {
+                  document.getElementsByName('3-' + amount_of_feed_added_ml_idx.toString())[0].value = amount_of_feed_added_ml_val.toFixed(2);
+              }
+              let eft_h_idx = 54*i + 7;
+              let eft_h_val = Math.abs((datetime - actual_inoculation_time) / (1000 * 60 * 60)).toFixed(2); // outputted as hours
+              let post_feed_start_time_h_idx = 54*i + 10;
+              let post_feed_start_time_h_val = Math.abs((datetime - actual_fed_batch_start_time) / (1000 * 60 * 60)).toFixed(2); // outputted as hours
+              let time_post_induction_h_idx = 54*i + 8;
+              let time_post_induction_h_val = Math.abs((datetime - actual_induction_start_time) / (1000 * 60 * 60)).toFixed(2); // outputted as hours
+              if (datetime != -1 && actual_inoculation_time != '') {
+                  document.getElementsByName('3-' + eft_h_idx.toString())[0].value = eft_h_val.toString();
+                  calculate_rates(); // since changes in eft h will result in changes in rate from scale 1 and 2
+              }
+              if (datetime != -1 && actual_fed_batch_start_time != '') {
+                  document.getElementsByName('3-' + post_feed_start_time_h_idx.toString())[0].value = post_feed_start_time_h_val.toString();
+              }
+              if (datetime != -1 && actual_induction_start_time != '') {
+                  document.getElementsByName('3-' + time_post_induction_h_idx.toString())[0].value = time_post_induction_h_val.toString();
+              }
+          }
+        }
+      </script>
+    
+      <script>
+        // calculates rate from scale 1 (g/h) and rate from scale 2 (g/h)
+        function calculate_rates() {
+            curr_run = -1;
+            curr_first_row_feed_weight_g = 0;
+            for (let i = 0; i < Number('{{num_timepoints}}'); i++) {
+                let run_idx = 54*i + 1;
+                let curr_run_id = document.getElementsByName('3-' + run_idx.toString())[0].id;
+                let curr_run_temp = Number(curr_run_id.charAt(6));
+                if (curr_run_temp != curr_run) { // if we've hit the top row of a new run
+                    curr_run = curr_run_temp;
+                } else { // if we're not at the top row of a new run
+                    let curr_eft_h_idx = 54*i + 7;
+                    let curr_eft_h_val = -1;
+                    if (document.getElementsByName('3-' + curr_eft_h_idx.toString())[0].value != "") {
+                        curr_eft_h_val = document.getElementsByName('3-' + curr_eft_h_idx.toString())[0].value;
+                    }
+                    let prev_eft_h_idx = 54*(i-1) + 7;
+                    let prev_eft_h_val = -1;
+                    if (document.getElementsByName('3-' + prev_eft_h_idx.toString())[0].value) {
+                        prev_eft_h_val = document.getElementsByName('3-' + prev_eft_h_idx.toString())[0].value;
+                    }
+                    // rate 1
+                    let curr_scale_1_weight_idx = 54*i + 19;
+                    let curr_scale_1_weight_val = -1;
+                    if (document.getElementsByName('3-' + curr_scale_1_weight_idx.toString())[0].value) {
+                        curr_scale_1_weight_val = document.getElementsByName('3-' + curr_scale_1_weight_idx.toString())[0].value;
+                    }
+                    let prev_scale_1_weight_idx = 54*(i-1) + 19;
+                    let prev_scale_1_weight_val = -1;
+                    if (document.getElementsByName('3-' + prev_scale_1_weight_idx.toString())[0].value) {
+                        prev_scale_1_weight_val = document.getElementsByName('3-' + prev_scale_1_weight_idx.toString())[0].value;
+                    }
+                    let rate_1_idx = 54*i + 21;
+                    if (prev_scale_1_weight_val != -1 && curr_scale_1_weight_val != -1 && prev_eft_h_val != -1 && curr_eft_h_val != -1) {
+                        document.getElementsByName('3-' + rate_1_idx.toString())[0].value = ((prev_scale_1_weight_val - curr_scale_1_weight_val) / (curr_eft_h_val - prev_eft_h_val)).toFixed(2);
+                    }
+                    // rate 2
+                    let curr_scale_2_weight_idx = 54*i + 22;
+                    let curr_scale_2_weight_val = -1;
+                    if (document.getElementsByName('3-' + curr_scale_2_weight_idx.toString())[0].value) {
+                        curr_scale_2_weight_val = document.getElementsByName('3-' + curr_scale_2_weight_idx.toString())[0].value;
+                    }
+                    let prev_scale_2_weight_idx = 54*(i-1) + 22;
+                    let prev_scale_2_weight_val = -1;
+                    if (document.getElementsByName('3-' + prev_scale_2_weight_idx.toString())[0].value) {
+                        prev_scale_2_weight_val = document.getElementsByName('3-' + prev_scale_2_weight_idx.toString())[0].value;
+                    }
+                    let rate_2_idx = 54*i + 24;
+                    if (prev_scale_2_weight_val != -1 && curr_scale_2_weight_val != -1 && prev_eft_h_val != -1 && curr_eft_h_val != -1) {
+                        document.getElementsByName('3-' + rate_2_idx.toString())[0].value = ((prev_scale_2_weight_val - curr_scale_2_weight_val) / (curr_eft_h_val - prev_eft_h_val)).toFixed(2);
+                    }
+                }
+            }
+        }
+      </script>
+    
+      <script>
+        // fixes weird bug where some values are "text" by default
+        var fields = document.querySelectorAll('#timepoint-div [id=reactor_id_temp]');
+        fields.forEach(function(el) {
+            if (el.value == "type=\"text\"") {
+                el.value = '';
+            }
+        });
+      </script>
+
+<script>
+  // when Sutro Production Batch Record changes run id, the same changes are made on Production Addition page
+  // when Sutro Production Batch Record changes run id and reactor id, the same changes are made on Growth Data page
+  function change_additions_prelim() {
+    var colCount = document.getElementById('my_table1').rows[0].cells.length;
+    for (let i = 1; i <= colCount; i++) {
+        document.getElementsByName('2-' + i.toString())[0].value = document.getElementsByName('1-' + (i+3*colCount).toString())[0].value;
+    }
+    curr_run = -1;
+    for (let i = 0; i < Number('{{num_timepoints}}'); i++) {
+        let run_idx = 54*i + 1;
+        let curr_run_id = document.getElementsByName('3-' + run_idx.toString())[0].id;
+        let curr_run_temp = Number(curr_run_id.charAt(6));
+        if (curr_run_temp != curr_run) { // if we've hit the top row of a new run
+          curr_run = curr_run_temp;
+          document.getElementsByName('3-' + (1 + 54*i).toString())[0].value = document.getElementsByName('1-' + (curr_run+3*colCount + 1).toString())[0].value;
+          document.getElementsByName('3-' + (2 + 54*i).toString())[0].value = document.getElementsByName('1-' + (curr_run+3*colCount + 1).toString())[0].value;
+          document.getElementsByName('3-' + (3 + 54*i).toString())[0].value = document.getElementsByName('1-' + (curr_run+4*colCount + 1).toString())[0].value;
+        } else { // if we're not at the top row of a new run
+          document.getElementsByName('3-' + (1 + 54*i).toString())[0].value = document.getElementsByName('1-' + (curr_run+3*colCount + 1).toString())[0].value;
+          document.getElementsByName('3-' + (2 + 54*i).toString())[0].value = document.getElementsByName('1-' + (curr_run+3*colCount + 1).toString())[0].value;
+          document.getElementsByName('3-' + (3 + 54*i).toString())[0].value = document.getElementsByName('1-' + (curr_run+4*colCount + 1).toString())[0].value;
+        }
+      }
+  }
+  </script>
+
+
+</div>
+
+<!--This is just to store necessary data so we can retrieve it after the form is submitted-->
+<div style='display:none'>
+  <div class="form-group "><label class="control-label" for="num_runs">Number of Runs</label>
+          
+    <input class="form-control" id="num_runs" name="num_runs" step="any" type="text" value="{{num_runs}}">
+  
+  </div>
+  <div class="form-group "><label class="control-label" for="num_phases">Number of Phases</label>
+          
+    <input class="form-control" id="num_phases_total" name="num_phases" step="any" type="text" value="{{num_phases}}">
+  
+  </div>
+
+  {% for i in range(num_runs) %}
+
+  <div class="form-group "><label class="control-label" for="num_timepoint_lst{{i}}">Number of Timepoints</label>
+        
+    <input class="form-control" id="num_timepoint_lst{{i}}" name="num_timepoint_lst{{i}}" step="any" type="text" value="{{num_timepoint_lst[i]}}">
+  
+  </div>
+      
+  {% endfor %}
+  
+  <input id="num_additions" name="num_additions" value="{{num_phases}}"></input>
+
+  {% for i in range(num_phases) %}
+
+  <div class="form-group "><label class="control-label" for="num_additions_lst{{i}}">Number of Additions by Phase</label>
+        
+    <input class="form-control" id="num_additions_lst{{i}}" name="num_additions_lst{{i}}" step="any" type="text" value="1">
+  
+  </div>
+      
+  {% endfor %}
+
+  {% for i in range(num_phases) %}
+
+  <div class="form-group "><label class="control-label" for="phase_on_or_off{{i}}"></label>
+        
+    <input class="form-control" id="phase_on_or_off{{i}}" name="phase_on_or_off{{i}}" step="any" type="text" value="off">
+  
+  </div>
+      
+  {% endfor %}
+
+  {% for i in range(num_phases) %}
+
+  <div class="form-group "><label class="control-label" for="phase_lst_for_html{{i}}"></label>
+        
+    <input class="form-control" id="phase_lst_for_html{{i}}" name="phase_lst_for_html{{i}}" step="any" type="text" value="{{phase_lst[i]}}">
+  
+  </div>
+      
+  {% endfor %}
+
+
+</div>
+
+
+    
+</form> 
+    
+    
+<p></p>
+
+  </div>
+
+  {% endblock %}
+

@@ -1,0 +1,57 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<script>
+    document.getElementById('pills-nav').style.display = 'none';
+  </script>
+
+
+
+  
+
+<div style="margin-left:0.5%">
+<br>
+<h4>PD Upstream Data Entry Portal</h4>
+<hr>
+<p>Database successfully updated!</p>
+<h5>Fields from production process conditions tab in excel file not found in database</h5>
+<style>
+  ul#menu li {
+    display:inline;
+  }
+  </style>
+<ul div id = "menu">
+    
+      {% for your_list_element in br_fld_lst %}
+      <li>{{ your_list_element }}, </li>
+      {% endfor %}
+</ul>      
+<h5>Fields from growth data tab in excel file not found in database</h5>
+<style>
+  ul#menu li {
+    display:inline;
+  }
+  </style>
+<ul div id = "menu">
+    
+      {% for your_list_element in growth_fld_lst %}
+      <li>{{ your_list_element }}, </li>
+      {% endfor %}
+</ul>
+<h5>Fields from activity_titer data tab in excel file not found in database</h5>
+<style>
+  ul#menu li {
+    display:inline;
+  }
+  </style>
+<ul div id = "menu">
+    
+      {% for your_list_element in activity_fld_lst %}
+      <li>{{ your_list_element }}, </li>
+      {% endfor %}
+</ul>
+</div>
+
+{% endblock %}

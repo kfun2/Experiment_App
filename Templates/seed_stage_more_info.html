@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<script>
+    document.getElementById('pills-nav').style.display = 'none';
+</script>
+
+<div style="margin-left:0.5%" class="scrollwrapper">
+<br>
+<h4>Record Seed Stage Data</h4>
+<hr>
+
+<form action="{{ url_for('new_seed_stage') }}" method="post"
+class="form" role="form">
+<input id="csrf_token" name="csrf_token" type="hidden" value="Ijk2Y2Q2NTg1ZWEzMTU2NDVhMjJmMmQyM2M4MjVhYzQxMDE1Mjg2ZDAi.Ys9YlQ.tLi8tj8vkaAR2mKH4XswS4OTsVQ">
+
+<p style="display:none">
+    <input name="num_trains" value="{{num_trains}}">
+</p>
+
+<h6 style="font-size:18px">Select Number of Seed Stages per Seed Train</h6>
+<table id="my_table1">
+    {% for i in range(num_trains) %}
+    <td>
+    <p><label for="seed_train_run_id{{i}}">Seed Train Run ID for Seed Train {{i+1}}
+    </label><br><input onchange="create_table(this.id)" id="seed_train{{i}}" name="seed_train{{i}}" required value="">
+    </p>
+    <p><label for="num_stages{{i}}">Number of Stages for Seed Train {{i+1}}
+    </label><br><input onchange="create_table(this.id)" id="num_stages{{i}}" name="num_stages{{i}}" required step="1" type="number" value="">
+    </p>
+    </td>
+    {% endfor %}
+</table>
+
+<br>
+
+{% for i in range(num_trains) %}
+<div id="timept_table_div{{i}}" style="display:none">
+<h6 style="font-size:15px">Select Number of Timepoints for Each Seed Stage in Train {{i+1}}</h6>
+<table class="my_table4" id="timepoint_table{{i}}"></table>
+<br>
+</div>
+{% endfor %}
+
+<input type="submit" value="Create New Experiment" class="btn btn-primary" style="background-color:#006fba;border-color:#006fba">
+
+<br>
+
+</div>
+
+
+
+</form>
+
+  </form>
+
+</div>
+
+<br>
+
+</div>
+
+<script>
+
+</script>
+
+<script>
+    function create_table(id) {
+        seed_train = id.substring(10)
+        run_name = document.getElementById('seed_train' + seed_train).value
+        if (document.getElementById('num_stages' + seed_train).value != '') {
+            document.getElementById(`timept_table_div${seed_train}`).style.display = 'block'
+            num_stages = Number(document.getElementById('num_stages' + seed_train).value)
+            var curr_table = document.getElementById(`timepoint_table${seed_train}`)
+            $(`#timepoint_table${seed_train} tr`).remove(); 
+            var row = curr_table.insertRow(-1);
+            j = 0;
+            for (let i = 0; i < num_stages; i++) {
+                if (i % 6 == 0 && i != 0) {
+                    row = curr_table.insertRow(-1);
+                    j = 0;
+                }
+                var cell = row.insertCell(j);
+                cell.innerHTML = 
+                    `<p><label for="num_timepoints_${seed_train}_${i}">Number of Timepoints for ${run_name} (Seed Train ${Number(seed_train)+1}) Stage ${i+1}
+                    </label><br><input id="num_timepoints_${seed_train}_${i}" name="num_timepoints_${seed_train}_${i}" required step="1" type="number" value="">
+                    </p>`;
+                j++;
+            }
+        }
+    }
+</script>
+
+
+{% endblock %}

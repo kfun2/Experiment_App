@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+
+<script>
+    document.getElementById('pills-nav').style.display = 'none';
+  </script>
+
+<div style="margin-left:0.5%">
+<br>
+<h4>Edit Addition Process Version</h4>
+<hr>
+
+
+<form action="{{ url_for('addition_process_edit_submitted') }}" method="post"
+  class="form" role="form">
+  <input id="csrf_token" name="csrf_token" type="hidden" value="ImMwYmM5OTczMzBlN2M0ZmRmOWM4OWY0YmM5ZWM2ZWY5NWE4Y2Q1ODIi.Yv1otg.OQ41X0WffVKMatH4YwdczgKKdms">
+  
+    
+
+
+
+
+  <div class="form-group "><label class="control-label" for="process_version_name_used_as_template">Process Version Name to Edit</label>
+      
+    <select onchange="autofill()" class="form-control" id="process_version_name_used_as_template" name="process_version_name_used_as_template">
+      
+      <option disabled selected value> -- select an option -- </option>
+      
+      {% for i in range(addition_versions | length) %}
+      <option value="{{addition_versions[i]}}">{{addition_versions[i]}}</option>
+      {% endfor %}
+
+    </select>
+    </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="addition_name">Addition Name</label>
+        
+          <input class="form-control" id="addition_name" name="addition_name" type="text" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+  <div class="form-group "><label class="control-label" for="phase">Phase</label>
+      
+    <select onchange="autofill()" class="form-control" id="phase" name="phase">
+      
+      <option disabled selected value> -- select an option -- </option>
+      
+      {% for i in range(phases | length) %}
+      <option value="{{phases[i]}}">{{phases[i]}}</option>
+      {% endfor %}
+
+    </select>
+    </div>
+  
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="target_phase_time_h">Target Phase Time (H)</label>
+        
+          <input class="form-control" id="target_phase_time_h" name="target_phase_time_h" type="text" value="">
+        
+  </div>
+
+
+    
+
+
+
+
+<div class="form-group "><label class="control-label" for="target_batch_concentration_ml_li">Target Batch Concentration (mL/Li)</label>
+        
+          <input class="form-control" id="target_batch_concentration_ml_li" name="target_batch_concentration_ml_li" step="any" type="number" value="">
+        
+  </div>
+
+
+  <input type="submit" value="Save Changes" class="btn btn-primary" style="background-color:#006fba;border-color:#006fba">
+
+
+</form>
+
+</div>
+
+<script>
+    // auto-fill based on process version
+    function autofill() {
+      d = JSON.parse('{{rows | tojson}}');
+      const selectElement = document.getElementById('process_version_name_used_as_template');
+      const cells = document.querySelectorAll('input');
+        var opt = selectElement.options[selectElement.selectedIndex];
+        for (let i = 0; i < d.length; i++) {
+          var r = d[i]
+            if (r.process_version_name_used_as_template == opt.text) {
+            const select = document.getElementById('phase');
+            select.value = r.phase;
+              cells.forEach(function(el) {
+              if (el.value != "Submit") {
+                if (el.id == 'process_version_name_used_as_template') {
+                  el.value = r.process_version_name_used_as_template;
+                } else if (el.id == 'addition_name') {
+                  el.value = r.addition_name;
+                } else if (el.id == 'target_phase_time_h') {
+                  el.value = r.target_phase_time_h;
+                } else if (el.id == 'target_batch_concentration_ml_li') {
+                  el.value = r.target_batch_concentration_ml_li;
+                }
+              }
+          });
+        }
+      }
+  }
+  
+  </script>
+
+{% endblock %}
