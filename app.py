@@ -878,34 +878,22 @@ def upload_online_bioreactor_data_submitted():
                 }
    
     num_runs = request.form.get('num_runs')
-    # Each file will take about ~ 1.5 minutes to upload (for 65k rows in the Excel file), 3 minutes if run id already in mfcs_qs
+    # for each run, upload the time series online bioreactor data 
     for run in range(int(num_runs)):
         run_id = request.form.get('run_id_' + str(run))
-        #st = "SELECT id FROM pd_upstream.sutro_production_batch_record WHERE run_name='{}'".format(run_id)
         db.execute("SELECT id from pd_upstream.sutro_production_batch_record WHERE run_name = %(run_id)s", {"run_id":run_id})
-        #actual_run_id_query = db1.execute(st, run_id)
         actual_run_id_query = db.fetchall()
         actual_run_id = 0
-        #for i in actual_run_id_query:
-        #    actual_run_id = int(i[0])
         for i in actual_run_id_query:
            actual_run_id=int(i[0])
         # associates with the most recently added row (to sutro production batch record) of this run id (but ideally the same run id shouldn't be in there more than once)
         
-        #s = "DELETE FROM pd_upstream.mfcs_qs WHERE run_id='{}';".format(run_id)
         db.execute("DELETE FROM pd_upstream.mfcs_qs WHERE run_id_m= %(run_id_m)s", {"run_id_m":run_id})
-        #db1.execute(s)
-        #db1.commit()
         conn.commit()
         f = request.files['file_' + str(run)]
         filename = f.filename
-        #q = "DELETE FROM pd_upstream.mfcs_online_data_file_list WHERE run_id='{}';".format(run_id)
-        #db1.execute(q)
         db.execute("DELETE FROM pd_upstream.mfcs_online_data_file_list WHERE run_id= %(run_id)s", {"run_id":run_id})
-        #db1.commit()
         conn.commit()
-        #db1.execute("INSERT INTO pd_upstream.mfcs_online_data_file_list (filename,run_id) VALUES (:filename,:run_id)",{"filename":filename,"run_id":run_id})
-        #db1.commit()
         db.execute("""INSERT INTO pd_upstream.mfcs_online_data_file_list (filename,run_id) VALUES (%(filename)s,%(run_id)s)""",{"filename":filename,"run_id":run_id})
 
         conn.commit()
@@ -937,7 +925,6 @@ def upload_online_bioreactor_data_submitted():
         
         engine.dispose()
 
-    #return render_template('submitted.html', diff_lst = online_br_diff_lst )
     return render_template('submitted.html')
 
 
