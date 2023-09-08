@@ -1,1 +1,1 @@
-The purpose of this app is allow me and other scientists to enter, update and view experiment data from our fermentation experiments. Data from each experiment comes from different instruments and files and the goal is centralize the into a database.
+The purpose of this app is allow me and other scientists to enter, update and view experiment data from our fermentation experiments. Data from each experiment comes from different instruments and files and the goal is centralize them into a database.
