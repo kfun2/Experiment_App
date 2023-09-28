@@ -25,14 +25,14 @@ import io
 from flask import make_response
 
 
-engine = create_engine("postgresql://pd_upstream:hD4RfngcwEf3BK6yyDPS@phoebe:5432/upd_reagent")
+engine = create_engine("postgresql://v:x@phoebe:5432/upd_reagent")
 
 sesh = Session(bind=engine)
 connection = engine.connect()
 
 #db1 = scoped_session(sessionmaker(bind=engine))
 
-conn = psycopg2.connect(database = "upd_reagent",  user = 'pd_upstream', password = 'hD4RfngcwEf3BK6yyDPS', host = "phoebe", port = "5432", options="-c search_path=dbo,pd_upstream")
+conn = psycopg2.connect(database = "upd_reagent",  user = 'v', password = 'x', host = "phoebe", port = "5432", options="-c search_path=dbo,pd_upstream")
 db = conn.cursor()
 
 app = Flask(__name__)
